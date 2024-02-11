@@ -1,5 +1,7 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 # Create your views here.
 from .serializers import MyTokenObtainPairSerializer
@@ -15,14 +17,15 @@ class MyObtainTokenPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
-class RegisterView(generics.CreateAPIView):
-    queryset = CustomUser.objects.all()
-    permission_classes = (AllowAny,)
-    serializer_class = UserSerializer
+class RegisterView(APIView):
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
+    def post(self, request, format=None):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'Message': "User Created Successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response(data={"message": "User created successfully."}, status=status.HTTP_201_CREATED)
-        return Response(data={"message": "Password or username policy failed."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
