@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'auths'
+    'auths',
+    'blogs'
 
 ]
 
@@ -57,18 +58,24 @@ REST_FRAMEWORK = {
     #
     # ],
 
+
+        'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+        'PAGE_SIZE': 5,
+
     'DEFAULT_AUTHENTICATION_CLASSES': [
+'rest_framework_simplejwt.authentication.JWTAuthentication',
 
     ],
 
     "DEFAULT_PERMISSION_CLASSES": [
-   # "rest_framework.permissions.i",
-    'rest_framework.permissions.AllowAny',
+
+    # 'rest_framework.permissions.AllowAny',
     ],
 
 }
 
 AUTH_USER_MODEL = 'auths.CustomUser'
+POST_MODEL='blogs.Post'
 
 
 MIDDLEWARE = [
@@ -104,24 +111,8 @@ WSGI_APPLICATION = 'POC_project_v2.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME': 'POC_project',
-#        'USER': 'postgres',
-#        'PASSWORD': '123',
-#        'HOST': '127.0.0.1',
-#        'PORT': '5432',
-#    }
-# }
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",

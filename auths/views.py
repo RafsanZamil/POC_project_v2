@@ -20,9 +20,5 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = UserSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
 
-            return Response(data={"message": "User created successfully."}, status=status.HTTP_201_CREATED)
-        return Response(data={"message": "Password or username policy failed."}, status=status.HTTP_400_BAD_REQUEST)
+
