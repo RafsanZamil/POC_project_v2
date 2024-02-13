@@ -3,6 +3,8 @@ from django.db.models import Q
 from rest_framework import filters
 
 from rest_framework.pagination import PageNumberPagination
+
+from blog_comments.serializers import CommentSerializer
 from blogs.models import Post
 from blogs.serializers import PostSerializer
 from django.http import Http404
@@ -16,7 +18,9 @@ class PostCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, format=None):
-        serializer = PostSerializer(data=request.data)
+        request_data = dict(request.data)
+        request_data["author"] = request.user.id
+        serializer = PostSerializer(data=request_data)
         if serializer.is_valid():
             serializer.save()
 
@@ -35,6 +39,33 @@ class PostCreate(APIView):
 
 
 class PostList(APIView):
+    pagination_class = PageNumberPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['body', 'title']
+
+    def get(self, request, format=None):
+        posts = Post.objects.all()
+
+        # filter_by = request.query_params.get('search')
+        # posts = Post.objects.filter(
+        #     Q(
+        #         Q(title__icontains=filter_by) |
+        #         Q(body__icontains=filter_by)
+        #     )
+        # )
+
+        paginator = PageNumberPagination()
+
+        result_page = paginator.paginate_queryset(posts, request)
+        serializer = PostSerializer(result_page, many=True, context={'request': request})
+        try:
+            return Response({'message': 'sucess', 'error': False, 'code': 200,
+                             'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'message': 'fail', 'error': True, 'code': 500,
+                             })
+# Search
+class Search(APIView):
     pagination_class = PageNumberPagination
     filter_backends = [filters.SearchFilter]
     search_fields = ['body', 'title']
@@ -59,7 +90,6 @@ class PostList(APIView):
         except Exception as e:
             return Response({'message': 'fail', 'error': True, 'code': 500,
                              })
-
 
 # view post details, update and delete posts
 class PostDetail(APIView):
@@ -100,7 +130,7 @@ class PostDetail(APIView):
                     except Exception as e:
                         return Response({'message': 'fail', 'error': True, 'code': 400,
                                          })
-        return Response({"message": "You do not have permission to delete"})
+        return Response({"message": "You do not have permission to update"})
 
     def delete(self, request, pk, format=None, ):
 
@@ -119,3 +149,31 @@ class PostDetail(APIView):
             return Response({"message": 'No post found', 'error': False, })
             # return Response(status=status.HTTP_204_NO_CONTENT)
         return Response({"message": "You do not have permission to delete"})
+
+
+class ViewComments(APIView):
+    model = Post
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self, pk):
+
+        try:
+            return (Post.objects.get(pk=pk))
+
+        except Post.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+
+        #posts = self.get_object(pk)
+        posts = Post.objects.get(id=pk)
+        comments = posts.comment_set.all()
+        comments= comments.values('name','body').order_by('id')
+
+        serializer = PostSerializer(posts)
+        try:
+            return Response({'message': 'sucess', 'error': False, 'code': 200,
+                             'result': {'items': comments, }}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'message': 'fail', 'error': True, 'code': 500,
+                             })
