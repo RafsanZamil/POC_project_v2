@@ -4,7 +4,6 @@ from rest_framework import filters
 
 from rest_framework.pagination import PageNumberPagination
 
-from blog_comments.serializers import CommentSerializer
 from blogs.models import Post
 from blogs.serializers import PostSerializer
 from django.http import Http404
@@ -46,13 +45,6 @@ class PostList(APIView):
     def get(self, request, format=None):
         posts = Post.objects.all()
 
-        # filter_by = request.query_params.get('search')
-        # posts = Post.objects.filter(
-        #     Q(
-        #         Q(title__icontains=filter_by) |
-        #         Q(body__icontains=filter_by)
-        #     )
-        # )
 
         paginator = PageNumberPagination()
 
@@ -64,21 +56,22 @@ class PostList(APIView):
         except Exception as e:
             return Response({'message': 'fail', 'error': True, 'code': 500,
                              })
+
+
 # Search
 class Search(APIView):
     pagination_class = PageNumberPagination
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['body', 'title']
+
+    # filter_backends = [filters.SearchFilter]
+    # search_fields = ['body', 'title']
 
     def get(self, request, format=None):
-
         filter_by = request.query_params.get('search')
-        posts = Post.objects.filter(
-            Q(
-                Q(title__icontains=filter_by) |
-                Q(body__icontains=filter_by)
-            )
-        )
+        if filter_by:
+            posts = Post.objects.filter(
+                Q(title__icontains=filter_by) | Q(body__icontains=filter_by))
+        else:
+            posts= Post.objects.all()
 
         paginator = PageNumberPagination()
 
@@ -90,6 +83,7 @@ class Search(APIView):
         except Exception as e:
             return Response({'message': 'fail', 'error': True, 'code': 500,
                              })
+
 
 # view post details, update and delete posts
 class PostDetail(APIView):
@@ -165,10 +159,10 @@ class ViewComments(APIView):
 
     def get(self, request, pk, format=None):
 
-        #posts = self.get_object(pk)
+        # posts = self.get_object(pk)
         posts = Post.objects.get(id=pk)
         comments = posts.comment_set.all()
-        comments= comments.values('name','body').order_by('id')
+        comments = comments.values('name', 'body').order_by('id')
 
         serializer = PostSerializer(posts)
         try:

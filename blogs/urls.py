@@ -11,3 +11,4 @@ urlpatterns = [
     path("blog/<int:pk>/comment",ViewComments.as_view(), name="comments")
 
 ]
+
