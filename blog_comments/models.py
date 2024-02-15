@@ -17,9 +17,9 @@ class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
-    #
+
     # def __str__(self):
-    #     return f'Comment by {self.comment_by} on {self.post}'
+    #     return f'Comment by {self.post} on {self.post}'
     #     pass
     #
     # pass

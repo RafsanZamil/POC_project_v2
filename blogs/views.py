@@ -71,7 +71,7 @@ class Search(APIView):
             posts = Post.objects.filter(
                 Q(title__icontains=filter_by) | Q(body__icontains=filter_by))
         else:
-            posts= Post.objects.all()
+            posts = Post.objects.all()
 
         paginator = PageNumberPagination()
 
@@ -160,14 +160,15 @@ class ViewComments(APIView):
     def get(self, request, pk, format=None):
 
         # posts = self.get_object(pk)
-        posts = Post.objects.get(id=pk)
-        comments = posts.comment_set.all()
-        comments = comments.values('name', 'body').order_by('id')
 
-        serializer = PostSerializer(posts)
         try:
+            posts = Post.objects.get(id=pk)
+            comments = posts.comment_set.all()
+            comments = comments.values('name', 'body').order_by('id')
+
+            serializer = PostSerializer(posts)
             return Response({'message': 'sucess', 'error': False, 'code': 200,
                              'result': {'items': comments, }}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'message': 'fail', 'error': True, 'code': 500,
+            return Response({'message': 'post not found', 'error': True, 'code': 500,
                              })
