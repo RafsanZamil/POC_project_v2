@@ -2,7 +2,6 @@
 # Create your models here.
 
 from django.db import models
-
 from POC_project_v2 import settings
 from blogs.models import Post
 from auths.models import CustomUser

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django_filters',
     'blog_comments',
     "django_extensions",
+    # "debug_toolbar"
 
 ]
 

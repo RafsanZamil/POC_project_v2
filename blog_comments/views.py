@@ -1,4 +1,3 @@
-from django.shortcuts import render
 
 # Create your views here.
 from django.http import Http404
@@ -14,9 +13,10 @@ class CreateComment(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, format=None):
+
         request_data = dict(request.data)
         request_data["comment_author"] = request.user.id
-        # print(request_data)
+
         serializer = CommentSerializer(data=request_data)
         if serializer.is_valid():
             serializer.save()
