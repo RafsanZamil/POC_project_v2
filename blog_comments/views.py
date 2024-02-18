@@ -9,27 +9,23 @@ from blog_comments.serializers import CommentSerializer
 class CreateComment(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    @staticmethod
     def post(self, request, format=None):
         request_data = dict(request.data)
         request_data["comment_author"] = request.user.id
-        # print(request_data)
         serializer = CommentSerializer(data=request_data)
         if serializer.is_valid():
             serializer.save()
 
             try:
-                return Response({'message': 'comment created ', 'error': False, 'code': 201,
+                return Response({'message': 'comment created ',
                                  'result': {'items': serializer.data, }}, status=status.HTTP_201_CREATED)
             except Exception as e:
 
-                return Response({'message': 'fail', 'error': True, 'code': 500,
+                return Response({'message': 'fail',
                                  }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-# update and delete comments
 
 class CommentDetail(APIView):
     model = Comment
@@ -38,21 +34,19 @@ class CommentDetail(APIView):
     def get_object(self, pk):
 
         try:
-            return Comment.objects.get(pk=pk)
+            comment = Comment.objects.get(pk=pk)
+            return comment
 
         except Comment.DoesNotExist:
             raise Http404
 
     def put(self, request, pk, format=None):
 
-        snippet = self.get_object(pk, )
-        # print(snippet)
-        # print(self.request.user.id, " ",type(self.request.user.id))
-        # print(snippet.comment_author_id, " ", type(snippet.comment_author_id))
-        if self.request.user.id == snippet.comment_author_id:
-            if snippet:
+        comment = self.get_object(pk, )
+        if self.request.user.id == comment.comment_author_id:
+            if comment:
 
-                serializer = CommentSerializer(snippet, data=request.data)
+                serializer = CommentSerializer(comment, data=request.data)
                 print("is valid: ", serializer.is_valid())
                 if serializer.is_valid():
                     serializer.save()
@@ -80,5 +74,5 @@ class CommentDetail(APIView):
                     return Response({'message': 'failed', 'error': True, 'code': 500,
                                      })
             return Response({"message": 'No post found', 'error': False, })
-            # return Response(status=status.HTTP_204_NO_CONTENT)
+
         return Response({"message": "You do not have permission to delete"})

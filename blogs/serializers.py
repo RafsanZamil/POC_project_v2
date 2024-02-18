@@ -9,6 +9,7 @@ class PostSerializer(serializers.ModelSerializer):
                   "title",
                   "body",
                   "created_at",
+                  "is_active"
                   )
 
         model = Post

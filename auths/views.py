@@ -14,7 +14,7 @@ class MyObtainTokenPairView(TokenObtainPairView):
 
 class RegisterView(APIView):
 
-    @staticmethod
+
     def post(self, request, format=None):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -26,10 +26,9 @@ class RegisterView(APIView):
 class Logout(APIView):
     permission_classes = IsAuthenticated
 
-    @staticmethod
+
     def post(self, request, format=None):
         try:
-            # Delete the user's token to logout
             request.user.auth_token.delete()
             return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         except Exception as e:
