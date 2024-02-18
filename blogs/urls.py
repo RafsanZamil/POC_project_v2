@@ -1,6 +1,4 @@
-# posts/urls.py
 from django.urls import path
-
 from blogs.views import PostDetail, PostCreate, PostList, ViewComments, Search
 
 urlpatterns = [

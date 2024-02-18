@@ -1,11 +1,7 @@
-from django.shortcuts import render
-
-# Create your views here.
 from django.http import Http404
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from blog_comments.models import Comment
 from blog_comments.serializers import CommentSerializer
 
@@ -13,6 +9,7 @@ from blog_comments.serializers import CommentSerializer
 class CreateComment(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    @staticmethod
     def post(self, request, format=None):
         request_data = dict(request.data)
         request_data["comment_author"] = request.user.id
@@ -41,7 +38,7 @@ class CommentDetail(APIView):
     def get_object(self, pk):
 
         try:
-            return (Comment.objects.get(pk=pk))
+            return Comment.objects.get(pk=pk)
 
         except Comment.DoesNotExist:
             raise Http404
