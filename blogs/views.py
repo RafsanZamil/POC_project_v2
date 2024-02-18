@@ -88,7 +88,7 @@ class Search(APIView):
 # view post details, update and delete posts
 class PostDetail(APIView):
     model = Post
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk):
 
@@ -101,13 +101,15 @@ class PostDetail(APIView):
     def get(self, request, pk, format=None):
 
         posts = self.get_object(pk)
+        comments = posts.comment_set.all()
+        comments = comments.values('name', 'body')
         serializer = PostSerializer(posts)
         try:
             return Response({'message': 'sucess', 'error': False, 'code': 200,
-                             'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
+                                 'result': {'items': serializer.data, 'comments': comments}}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'message': 'fail', 'error': True, 'code': 500,
-                             })
+                                 })
 
     def put(self, request, pk, format=None):
 
