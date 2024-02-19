@@ -1,13 +1,8 @@
-from django.http import JsonResponse
-from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-# Create your views here.
 from .serializers import MyTokenObtainPairSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .models import CustomUser
 from .serializers import UserSerializer
 from rest_framework import generics, status
 
@@ -27,14 +22,12 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class Logout(APIView):
     permission_classes = (IsAuthenticated)
-    def post(self,request,format=None):
+
+    def post(self, request, format=None):
         try:
-            # Delete the user's token to logout
             request.user.auth_token.delete()
             return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
