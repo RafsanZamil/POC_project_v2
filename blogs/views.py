@@ -1,9 +1,6 @@
 from django.db.models import Q
-
 from rest_framework import filters
-
 from rest_framework.pagination import PageNumberPagination
-
 from blogs.models import Post
 from blogs.serializers import PostSerializer
 from django.http import Http404
@@ -12,7 +9,6 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 
 
-# Create Posts
 class PostCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -43,11 +39,8 @@ class PostList(APIView):
     search_fields = ['body', 'title']
 
     def get(self, request, format=None):
-        posts = Post.objects.all()
-
-
+        posts = Post.objects.filter(is_active=True)
         paginator = PageNumberPagination()
-
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many=True, context={'request': request})
         try:
@@ -58,7 +51,7 @@ class PostList(APIView):
                              })
 
 
-# Search
+
 class Search(APIView):
     pagination_class = PageNumberPagination
 
@@ -71,7 +64,6 @@ class Search(APIView):
             posts = Post.objects.all()
 
         paginator = PageNumberPagination()
-
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many=True, context={'request': request})
         try:
@@ -84,13 +76,12 @@ class Search(APIView):
 
 # view post details, update and delete posts
 class PostDetail(APIView):
-    model = Post
-    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk):
 
         try:
-            return (Post.objects.get(pk=pk))
+            posts = Post.objects.get(pk=pk, is_active=True)
+            return posts
 
         except Post.DoesNotExist:
             raise Http404
@@ -103,10 +94,13 @@ class PostDetail(APIView):
         serializer = PostSerializer(posts)
         try:
             return Response({'message': 'sucess', 'error': False, 'code': 200,
+
                              'result': {'items': serializer.data,'comments':comments }}, status=status.HTTP_200_OK)
+
+
         except Exception as e:
             return Response({'message': 'fail', 'error': True, 'code': 500,
-                             })
+                                 })
 
     def put(self, request, pk, format=None):
 
@@ -130,7 +124,8 @@ class PostDetail(APIView):
         post = self.get_object(pk)
         if self.request.user == post.author:
             if post:
-                post.delete()
+                post.is_active = False
+                post.save()
 
                 try:
                     return Response({'message': 'successfully deleted', 'code': 204,
@@ -151,14 +146,13 @@ class ViewComments(APIView):
     def get_object(self, pk):
 
         try:
-            return (Post.objects.get(pk=pk))
+            post = Post.objects.get(pk=pk)
+            return post
 
         except Post.DoesNotExist:
             raise Http404
 
     def get(self, request, pk, format=None):
-
-        # posts = self.get_object(pk)
 
         try:
             posts = Post.objects.get(id=pk)

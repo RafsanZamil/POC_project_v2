@@ -4,7 +4,7 @@ from .serializers import MyTokenObtainPairSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer
-from rest_framework import generics, status
+from rest_framework import status
 
 
 class MyObtainTokenPairView(TokenObtainPairView):
@@ -13,6 +13,7 @@ class MyObtainTokenPairView(TokenObtainPairView):
 
 
 class RegisterView(APIView):
+
 
     def post(self, request, format=None):
         serializer = UserSerializer(data=request.data)
@@ -23,7 +24,8 @@ class RegisterView(APIView):
 
 
 class Logout(APIView):
-    permission_classes = (IsAuthenticated)
+
+    permission_classes = IsAuthenticated
 
     def post(self, request, format=None):
         try:
