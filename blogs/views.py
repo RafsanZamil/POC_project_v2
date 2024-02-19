@@ -20,7 +20,7 @@ class PostCreate(APIView):
             serializer.save()
 
             try:
-                return Response({'message': 'Blog post created ', 'error': False, 'code': 201,
+                return Response({'message': 'Blog post created ',
                                  'result': {'items': serializer.data, }}, status=status.HTTP_201_CREATED)
             except Exception as e:
 
@@ -28,9 +28,6 @@ class PostCreate(APIView):
                                  }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# View all posts
 
 
 class PostList(APIView):
@@ -44,12 +41,11 @@ class PostList(APIView):
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many=True, context={'request': request})
         try:
-            return Response({'message': 'sucess', 'error': False, 'code': 200,
+            return Response({'message': 'success',
                              'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'message': 'fail', 'error': True, 'code': 500,
                              })
-
 
 
 class Search(APIView):
@@ -67,7 +63,7 @@ class Search(APIView):
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many=True, context={'request': request})
         try:
-            return Response({'message': 'sucess', 'error': False, 'code': 200,
+            return Response({'message': 'success',
                              'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'message': 'fail', 'error': True, 'code': 500,
@@ -93,14 +89,12 @@ class PostDetail(APIView):
         comments = comments.values('name', 'body')
         serializer = PostSerializer(posts)
         try:
-            return Response({'message': 'sucess', 'error': False, 'code': 200,
+            return Response({'message': 'success',
 
-                             'result': {'items': serializer.data,'comments':comments }}, status=status.HTTP_200_OK)
-
-
+                             'result': {'items': serializer.data, 'comments': comments}}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'message': 'fail', 'error': True, 'code': 500,
-                                 })
+                             })
 
     def put(self, request, pk, format=None):
 
@@ -112,7 +106,7 @@ class PostDetail(APIView):
                     serializer.save()
 
                     try:
-                        return Response({'message': 'successfully updated', 'error': False, 'code': 200,
+                        return Response({'message': 'successfully updated',
                                          'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
                     except Exception as e:
                         return Response({'message': 'fail', 'error': True, 'code': 400,
@@ -122,13 +116,14 @@ class PostDetail(APIView):
     def delete(self, request, pk, format=None, ):
 
         post = self.get_object(pk)
+        print("post:", post)
         if self.request.user == post.author:
             if post:
                 post.is_active = False
                 post.save()
 
                 try:
-                    return Response({'message': 'successfully deleted', 'code': 204,
+                    return Response({'message': 'successfully deleted',
                                      }, status=status.HTTP_204_NO_CONTENT
                                     )
                 except Exception as e:
@@ -140,8 +135,6 @@ class PostDetail(APIView):
 
 
 class ViewComments(APIView):
-    model = Post
-   # permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk):
 
@@ -160,7 +153,7 @@ class ViewComments(APIView):
             comments = comments.values('name', 'body').order_by('id')
 
             serializer = PostSerializer(posts)
-            return Response({'message': 'sucess', 'error': False, 'code': 200,
+            return Response({'message': 'success',
                              'result': {'items': comments, }}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'message': 'post not found', 'error': True, 'code': 500,

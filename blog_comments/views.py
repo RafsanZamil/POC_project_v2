@@ -54,7 +54,7 @@ class CommentDetail(APIView):
                     serializer.save()
 
                     try:
-                        return Response({'message': 'successfully updated', 'error': False, 'code': 200,
+                        return Response({'message': 'successfully updated',
                                          'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
                     except Exception as e:
                         return Response({'message': 'fail', 'error': True, 'code': 400,
@@ -69,7 +69,7 @@ class CommentDetail(APIView):
                 snippet.delete()
 
                 try:
-                    return Response({'message': 'successfully deleted', 'code': 204,
+                    return Response({'message': 'successfully deleted',
                                      }, status=status.HTTP_204_NO_CONTENT
                                     )
                 except Exception as e:

@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
+
+from django.core.mail.backends import smtp
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -78,12 +80,12 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+CSRF_COOKIE_SECURE = False
 ROOT_URLCONF = 'POC_project_v2.urls'
 
 TEMPLATES = [
@@ -105,8 +107,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'POC_project_v2.wsgi.application'
 
+# Redis configuration
+REDIS_HOST = 'localhost'# Replace with your Redis server host
+REDIS_PORT = 6379  # Replace with your Redis server port
+REDIS_DB = 0  # Replace with your Redis database number
+
 # Database
 
+
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS')
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 DATABASES = {
     "default": {
