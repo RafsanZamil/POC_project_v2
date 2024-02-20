@@ -6,7 +6,7 @@ urlpatterns = [
     path("blog/create/", PostCreate.as_view(), name="create_post"),
     path("blog/", PostList.as_view(), name="view_post"),
     path("blog/view/", Search.as_view(), name="search"),
-    path("blog/<int:pk>/comment/",ViewComments.as_view(), name="comments")
+    path("blog/<int:pk>/comment/",ViewComments.as_view(), name="view_comments")
 
 ]
 

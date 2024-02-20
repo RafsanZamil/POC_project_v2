@@ -1,6 +1,9 @@
+from django.core.paginator import Paginator
 from django.db.models import Q
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.reverse import reverse
+from blog_comments.serializers import CommentSerializer
 from blogs.models import Post
 from blogs.serializers import PostSerializer
 from django.http import Http404
@@ -30,22 +33,51 @@ class PostCreate(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# View all posts
+
+
 class PostList(APIView):
     pagination_class = PageNumberPagination
     filter_backends = [filters.SearchFilter]
     search_fields = ['body', 'title']
 
     def get(self, request, format=None):
-        posts = Post.objects.filter(is_active=True)
-        paginator = PageNumberPagination()
-        result_page = paginator.paginate_queryset(posts, request)
-        serializer = PostSerializer(result_page, many=True, context={'request': request})
-        try:
-            return Response({'message': 'success',
-                             'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'message': 'fail', 'error': True, 'code': 500,
-                             })
+        posts = Post.objects.all()
+
+        p = Post.objects.all()
+        paginator = Paginator(p, 5)
+        page = request.GET.get('page', 1)
+        result = paginator.get_page(page)
+
+        if int(page) >= 2 and not request.user.is_authenticated:
+            return Response({'You need to login to see more posts': 'fail', 'error': True, 'code': 400})
+
+        serializer = PostSerializer(result, many=True, context={'request': request})
+
+        current_page_number = result.number
+        if current_page_number != 1:
+
+            previous_page_url = None
+            if result.has_previous():
+                previous_page_url = reverse('view_post') + f'?page={result.previous_page_number()}'
+
+            next_page_url = None
+            if result.has_next():
+                next_page_url = reverse('view_post') + f'?page={result.next_page_number()}'
+
+            try:
+                return Response({'message': 'sucess', 'error': False, 'code': 200,
+                                 'result': {'items': serializer.data, 'previous': previous_page_url,
+                                            'next': next_page_url}}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'message': 'fail', 'error': True, 'code': 500,
+                                 })
+        else:
+            previous_page_url = None
+            next_page_url = reverse('view_post') + f'?page={result.next_page_number()}'
+
+            return Response({'items': serializer.data, 'previous': previous_page_url,
+                             'next': next_page_url})
 
 
 class Search(APIView):
@@ -130,11 +162,12 @@ class PostDetail(APIView):
                     return Response({'message': 'failed', 'error': True, 'code': 500,
                                      })
             return Response({"message": 'No post found', 'error': False, })
-            # return Response(status=status.HTTP_204_NO_CONTENT)
+
         return Response({"message": "You do not have permission to delete"})
 
 
 class ViewComments(APIView):
+    pagination_class = PageNumberPagination
 
     def get_object(self, pk):
 
@@ -148,13 +181,20 @@ class ViewComments(APIView):
     def get(self, request, pk, format=None):
 
         try:
-            posts = Post.objects.get(id=pk)
-            comments = posts.comment_set.all()
-            comments = comments.values('name', 'body').order_by('id')
 
+            posts = Post.objects.get(id=pk)
             serializer = PostSerializer(posts)
+
+            p = posts.comment_set.all().order_by('-id')
+            comments = p.values('name', 'body')
+            paginator = Paginator(comments, 5)
+            page = request.GET.get('page')
+            result = paginator.get_page(page)
+            serializer2 = CommentSerializer(result, many=True)
+
             return Response({'message': 'success',
-                             'result': {'items': comments, }}, status=status.HTTP_200_OK)
+                             'result': {'items': serializer.data, "comment": comments, }},
+                            status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'message': 'post not found', 'error': True, 'code': 500,
+            return Response({'message': 'post not found', 'error': True,
                              })
