@@ -21,13 +21,8 @@ class PostCreate(APIView):
         if post_serializer.is_valid():
             post_serializer.save()
 
-            try:
-                return Response({'message': 'Blog post created ',
-                                 'result': {'items': post_serializer.data, }}, status=status.HTTP_201_CREATED)
-            except Exception as e:
-
-                return Response({'message': 'fail', 'error': True, 'code': 500,
-                                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'message': 'Blog post created ',
+                             'result': {'items': post_serializer.data, }}, status=status.HTTP_201_CREATED)
 
         return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -62,24 +57,24 @@ class PostList(APIView):
             if result.has_next():
                 next_page_url = reverse('view_post') + f'?page={result.next_page_number()}'
 
-            try:
-                return Response({'message': 'success', 'error': False, 'code': 200,
-                                 'result': {'items': post_serializer.data, 'previous': previous_page_url,
-                                            'next': next_page_url}}, status=status.HTTP_200_OK)
-            except Exception as e:
-                return Response({'message': 'fail', 'error': True, 'code': 500,
-                                 })
+            return Response({'message': 'success', 'error': False, 'code': 200,
+                             'result': {'items': post_serializer.data, 'previous': previous_page_url,
+                                        'next': next_page_url}})
+
         else:
             previous_page_url = None
             count = int(Post.objects.all().count())
             if count <= 5:
                 next_page_url = None
 
-                return Response({'items': post_serializer.data, 'previous': previous_page_url,
-                                 'next': next_page_url})
+                return Response({'message': 'success', 'error': False, 'code': 200,
+                                 'result': {'items': post_serializer.data, 'previous': previous_page_url,
+                                            'next': next_page_url}})
             next_page_url = reverse('view_post') + f'?page={result.next_page_number()}'
-            return Response({'items': post_serializer.data, 'previous': previous_page_url,
-                             'next': next_page_url})
+            return Response({'message': 'success', 'error': False, 'code': 200,
+                             'result': {'items': post_serializer.data, 'previous': previous_page_url,
+                                        'next': next_page_url}})
+
 
 class Search(APIView):
 
@@ -92,12 +87,9 @@ class Search(APIView):
             posts = Post.objects.all()
 
         post_serializer = PostSerializer(posts, many=True, context={'request': request})
-        try:
-            return Response({'message': 'success',
-                             'result': {'items': post_serializer.data, }}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'message': 'fail', 'error': True, 'code': 500,
-                             })
+
+        return Response({'message': 'success',
+                         'result': {'items': post_serializer.data, }}, status=status.HTTP_200_OK)
 
 
 # view post details, update and delete posts
@@ -118,28 +110,23 @@ class PostDetail(APIView):
         comments = posts.comment_set.all()
         comments = comments.values('name', 'body')
         post_serializer = PostSerializer(posts)
-        try:
-            return Response({'message': 'success',
+        return Response({'message': 'success', 'result': {'items': post_serializer.data, 'comments': comments}},
+                        status=status.HTTP_200_OK)
 
-                             'result': {'items': post_serializer.data, 'comments': comments}}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'message': 'fail', 'error': True, 'code': 500,
-                             })
-
-    def put(self, request, pk,):
+    def put(self, request, pk, ):
         post = self.get_object(pk, )
         if self.request.user == post.author:
             if post:
                 post_serializer = PostSerializer(post, data=request.data)
-                if post_serializer.is_valid():
-                    post_serializer.save()
-
-                    try:
-                        return Response({'message': 'successfully updated',
-                                         'result': {'items': post_serializer.data, }}, status=status.HTTP_200_OK)
-                    except Exception as e:
-                        return Response({'message': 'fail', 'error': True, 'code': 400,
-                                         })
+                try:
+                    if post_serializer.is_valid():
+                        post_serializer.save()
+                    return Response({'message': 'successfully updated',
+                                     'result': {'items': post_serializer.data, }}, status=status.HTTP_200_OK)
+                except Exception as e:
+                    return Response({'message': 'fail', 'error': True, 'code': 400,
+                                     })
+            return Response({'message': 'No Post Found', 'error': True, 'code': 400})
         return Response({"message": "You do not have permission to update"})
 
     def delete(self, request, pk):

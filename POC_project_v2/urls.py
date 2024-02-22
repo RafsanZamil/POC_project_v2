@@ -17,8 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 
+from blogs.views import PostList
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', PostList.as_view(), name='index'),
 
     path('api/', include('auths.urls')),
     path('api/', include('blogs.urls')),

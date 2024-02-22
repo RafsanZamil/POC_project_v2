@@ -10,21 +10,14 @@ class CreateComment(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-
         request_data = dict(request.data)
         request_data["comment_author"] = request.user.id
 
         serializer = CommentSerializer(data=request_data)
         if serializer.is_valid():
             serializer.save()
-
-            try:
-                return Response({'message': 'comment created ',
-                                 'result': {'items': serializer.data, }}, status=status.HTTP_201_CREATED)
-            except Exception as e:
-
-                return Response({'message': 'fail',
-                                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'message': 'comment created ',
+                             'result': {'items': serializer.data, }}, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -49,32 +42,27 @@ class CommentDetail(APIView):
             if comment:
 
                 serializer = CommentSerializer(comment, data=request.data)
-                print("is valid: ", serializer.is_valid())
                 if serializer.is_valid():
                     serializer.save()
 
-                    try:
-                        return Response({'message': 'successfully updated',
-                                         'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
-                    except Exception as e:
-                        return Response({'message': 'fail', 'error': True, 'code': 400,
-                                         })
+                    return Response({'message': 'successfully updated',
+                                     'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
+                return Response({'message': 'serializing failed'})
+            return Response({"message": 'No comment found', 'error': False, })
+
         return Response({"message": "You do not have permission to update"})
 
-    def delete(self, request, pk,):
+    def delete(self, request, pk, ):
 
         comment = self.get_object(pk)
         if self.request.user.id == comment.comment_author_id:
             if comment:
                 comment.delete()
 
-                try:
-                    return Response({'message': 'successfully deleted',
-                                     }, status=status.HTTP_204_NO_CONTENT
-                                    )
-                except Exception as e:
-                    return Response({'message': 'failed', 'error': True, 'code': 500,
-                                     })
-            return Response({"message": 'No post found', 'error': False, })
+                return Response({'message': 'successfully deleted',
+                                 }, status=status.HTTP_204_NO_CONTENT
+                                )
+
+            return Response({"message": 'No comment found', 'error': False, })
 
         return Response({"message": "You do not have permission to delete"})
