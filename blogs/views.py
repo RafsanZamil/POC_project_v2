@@ -180,8 +180,8 @@ class ViewComments(APIView):
             posts = Post.objects.get(id=pk)
             post_serializer = PostSerializer(posts)
 
-            p = posts.comment_set.all().order_by('-id')
-            comments = p.values('name', 'body')
+            comment = posts.comment_set.all().order_by('-id')
+            comments = comment.values('name', 'body')
 
             return Response({'message': 'success',
                              'result': {'items': post_serializer.data, "comment": comments, }},
