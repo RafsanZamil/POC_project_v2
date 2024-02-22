@@ -110,9 +110,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'POC_project_v2.wsgi.application'
 
 # Redis configuration
-REDIS_HOST = 'localhost'# Replace with your Redis server host
+REDIS_HOST = 'localhost' # Replace with your Redis server host
 REDIS_PORT = 6379  # Replace with your Redis server port
-REDIS_DB = 0  # Replace with your Redis database number
+REDIS_DB = 0 # Replace with your Redis database number
 
 # Database
 
@@ -183,7 +183,6 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
-
     "ALGORITHM": "HS256",
     # "SIGNING_KEY": settings.SECRET_KEY,
     "VERIFYING_KEY": "",

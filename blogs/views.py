@@ -66,7 +66,7 @@ class PostList(APIView):
                 next_page_url = reverse('view_post') + f'?page={result.next_page_number()}'
 
             try:
-                return Response({'message': 'sucess', 'error': False, 'code': 200,
+                return Response({'message': 'success', 'error': False, 'code': 200,
                                  'result': {'items': serializer.data, 'previous': previous_page_url,
                                             'next': next_page_url}}, status=status.HTTP_200_OK)
             except Exception as e:
@@ -81,7 +81,6 @@ class PostList(APIView):
 
 
 class Search(APIView):
-    pagination_class = PageNumberPagination
 
     def get(self, request, format=None):
         filter_by = request.query_params.get('search')
@@ -91,9 +90,8 @@ class Search(APIView):
         else:
             posts = Post.objects.all()
 
-        paginator = PageNumberPagination()
-        result_page = paginator.paginate_queryset(posts, request)
-        serializer = PostSerializer(result_page, many=True, context={'request': request})
+
+        serializer = PostSerializer(posts, many=True, context={'request': request})
         try:
             return Response({'message': 'success',
                              'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
