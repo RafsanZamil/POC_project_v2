@@ -47,7 +47,7 @@ class CommentDetail(APIView):
 
                     return Response({'message': 'successfully updated',
                                      'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
-                return Response({'message': 'serializing failed'})
+
             return Response({"message": 'No comment found', 'error': False, })
 
         return Response({"message": "You do not have permission to update"})
