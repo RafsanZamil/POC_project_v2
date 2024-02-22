@@ -9,7 +9,7 @@ from blog_comments.serializers import CommentSerializer
 class CreateComment(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, format=None):
+    def post(self, request):
 
         request_data = dict(request.data)
         request_data["comment_author"] = request.user.id
@@ -42,7 +42,7 @@ class CommentDetail(APIView):
         except Comment.DoesNotExist:
             raise Http404
 
-    def put(self, request, pk, format=None):
+    def put(self, request, pk):
 
         comment = self.get_object(pk, )
         if self.request.user.id == comment.comment_author_id:
@@ -61,12 +61,12 @@ class CommentDetail(APIView):
                                          })
         return Response({"message": "You do not have permission to update"})
 
-    def delete(self, request, pk, format=None, ):
+    def delete(self, request, pk,):
 
-        snippet = self.get_object(pk)
-        if self.request.user.id == snippet.comment_author_id:
-            if snippet:
-                snippet.delete()
+        comment = self.get_object(pk)
+        if self.request.user.id == comment.comment_author_id:
+            if comment:
+                comment.delete()
 
                 try:
                     return Response({'message': 'successfully deleted',

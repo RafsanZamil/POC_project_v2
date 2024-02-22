@@ -3,7 +3,6 @@ from django.db.models import Q
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.reverse import reverse
-from blog_comments.serializers import CommentSerializer
 from blogs.models import Post
 from blogs.serializers import PostSerializer
 from django.http import Http404
@@ -15,22 +14,22 @@ from rest_framework import status, permissions
 class PostCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, format=None):
+    def post(self, request):
         request_data = dict(request.data)
         request_data["author"] = request.user.id
-        serializer = PostSerializer(data=request_data)
-        if serializer.is_valid():
-            serializer.save()
+        post_serializer = PostSerializer(data=request_data)
+        if post_serializer.is_valid():
+            post_serializer.save()
 
             try:
                 return Response({'message': 'Blog post created ',
-                                 'result': {'items': serializer.data, }}, status=status.HTTP_201_CREATED)
+                                 'result': {'items': post_serializer.data, }}, status=status.HTTP_201_CREATED)
             except Exception as e:
 
                 return Response({'message': 'fail', 'error': True, 'code': 500,
                                  }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # View all posts
@@ -41,18 +40,16 @@ class PostList(APIView):
     filter_backends = [filters.SearchFilter]
     search_fields = ['body', 'title']
 
-    def get(self, request, format=None):
+    def get(self, request):
         posts = Post.objects.all()
-
-        p = Post.objects.all()
-        paginator = Paginator(p, 5)
+        paginator = Paginator(posts, 5)
         page = request.GET.get('page', 1)
         result = paginator.get_page(page)
 
         if int(page) >= 2 and not request.user.is_authenticated:
             return Response({'You need to login to see more posts': 'fail', 'error': True, 'code': 400})
 
-        serializer = PostSerializer(result, many=True, context={'request': request})
+        post_serializer = PostSerializer(result, many=True, context={'request': request})
 
         current_page_number = result.number
         if current_page_number != 1:
@@ -67,22 +64,26 @@ class PostList(APIView):
 
             try:
                 return Response({'message': 'success', 'error': False, 'code': 200,
-                                 'result': {'items': serializer.data, 'previous': previous_page_url,
+                                 'result': {'items': post_serializer.data, 'previous': previous_page_url,
                                             'next': next_page_url}}, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response({'message': 'fail', 'error': True, 'code': 500,
                                  })
         else:
             previous_page_url = None
+            count = int(Post.objects.all().count())
+            if count <= 5:
+                next_page_url = None
+
+                return Response({'items': post_serializer.data, 'previous': previous_page_url,
+                                 'next': next_page_url})
             next_page_url = reverse('view_post') + f'?page={result.next_page_number()}'
-
-            return Response({'items': serializer.data, 'previous': previous_page_url,
+            return Response({'items': post_serializer.data, 'previous': previous_page_url,
                              'next': next_page_url})
-
 
 class Search(APIView):
 
-    def get(self, request, format=None):
+    def get(self, request):
         filter_by = request.query_params.get('search')
         if filter_by:
             posts = Post.objects.filter(
@@ -90,11 +91,10 @@ class Search(APIView):
         else:
             posts = Post.objects.all()
 
-
-        serializer = PostSerializer(posts, many=True, context={'request': request})
+        post_serializer = PostSerializer(posts, many=True, context={'request': request})
         try:
             return Response({'message': 'success',
-                             'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
+                             'result': {'items': post_serializer.data, }}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'message': 'fail', 'error': True, 'code': 500,
                              })
@@ -112,41 +112,39 @@ class PostDetail(APIView):
         except Post.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
+    def get(self, request, pk):
 
         posts = self.get_object(pk)
         comments = posts.comment_set.all()
         comments = comments.values('name', 'body')
-        serializer = PostSerializer(posts)
+        post_serializer = PostSerializer(posts)
         try:
             return Response({'message': 'success',
 
-                             'result': {'items': serializer.data, 'comments': comments}}, status=status.HTTP_200_OK)
+                             'result': {'items': post_serializer.data, 'comments': comments}}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'message': 'fail', 'error': True, 'code': 500,
                              })
 
-    def put(self, request, pk, format=None):
-
-        snippet = self.get_object(pk, )
-        if self.request.user == snippet.author:
-            if snippet:
-                serializer = PostSerializer(snippet, data=request.data)
-                if serializer.is_valid():
-                    serializer.save()
+    def put(self, request, pk,):
+        post = self.get_object(pk, )
+        if self.request.user == post.author:
+            if post:
+                post_serializer = PostSerializer(post, data=request.data)
+                if post_serializer.is_valid():
+                    post_serializer.save()
 
                     try:
                         return Response({'message': 'successfully updated',
-                                         'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
+                                         'result': {'items': post_serializer.data, }}, status=status.HTTP_200_OK)
                     except Exception as e:
                         return Response({'message': 'fail', 'error': True, 'code': 400,
                                          })
         return Response({"message": "You do not have permission to update"})
 
-    def delete(self, request, pk, format=None, ):
+    def delete(self, request, pk):
 
         post = self.get_object(pk)
-        print("post:", post)
         if self.request.user == post.author:
             if post:
                 post.is_active = False
@@ -165,7 +163,6 @@ class PostDetail(APIView):
 
 
 class ViewComments(APIView):
-    pagination_class = PageNumberPagination
 
     def get_object(self, pk):
 
@@ -176,22 +173,18 @@ class ViewComments(APIView):
         except Post.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
+    def get(self, request, pk):
 
         try:
 
             posts = Post.objects.get(id=pk)
-            serializer = PostSerializer(posts)
+            post_serializer = PostSerializer(posts)
 
             p = posts.comment_set.all().order_by('-id')
             comments = p.values('name', 'body')
-            paginator = Paginator(comments, 5)
-            page = request.GET.get('page')
-            result = paginator.get_page(page)
-            serializer2 = CommentSerializer(result, many=True)
 
             return Response({'message': 'success',
-                             'result': {'items': serializer.data, "comment": comments, }},
+                             'result': {'items': post_serializer.data, "comment": comments, }},
                             status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'message': 'post not found', 'error': True,

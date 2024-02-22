@@ -1,7 +1,6 @@
 import random
 import redis
 from django.core.mail import EmailMessage, get_connection
-import secrets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from POC_project_v2 import settings
@@ -10,11 +9,9 @@ from .serializers import MyTokenObtainPairSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer
-from rest_framework import status, permissions
-
+from rest_framework import status
 
 redis_client = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
-
 
 
 class MyObtainTokenPairView(TokenObtainPairView):
@@ -24,7 +21,7 @@ class MyObtainTokenPairView(TokenObtainPairView):
 
 class RegisterView(APIView):
 
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -52,7 +49,7 @@ class RegisterView(APIView):
 
 
 class VerifyOTP(APIView):
-    def post(self, request, Format=None):
+    def post(self, request):
         emails = request.data.get("email")
         try:
             stored_otp = redis_client.get(emails)
@@ -80,10 +77,11 @@ class VerifyOTP(APIView):
         except:
             return Response({"message": "Invalid email or otp"}, status=401)
 
+
 class Logout(APIView):
     permission_classes = IsAuthenticated
 
-    def post(self, request, format=None):
+    def post(self, request):
         try:
             request.user.auth_token.delete()
             return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
