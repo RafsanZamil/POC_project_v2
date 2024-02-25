@@ -116,16 +116,17 @@ class PostDetail(APIView):
     def put(self, request, pk, ):
         post = self.get_object(pk, )
         if self.request.user == post.author:
+            request_data = dict(request.data)
+            request_data["author"] = request.user.id
             if post:
-                post_serializer = PostSerializer(post, data=request.data)
-                try:
-                    if post_serializer.is_valid():
-                        post_serializer.save()
+                post_serializer = PostSerializer(post, data=request.data, partial=True)
+                if post_serializer.is_valid():
+                    post_serializer.save()
                     return Response({'message': 'successfully updated',
                                      'result': {'items': post_serializer.data, }}, status=status.HTTP_200_OK)
-                except Exception as e:
-                    return Response({'message': 'fail', 'error': True, 'code': 400,
-                                     })
+                else:
+                    return Response({'message': post_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
             return Response({'message': 'No Post Found', 'error': True, 'code': 400})
         return Response({"message": "You do not have permission to update"})
 
@@ -137,13 +138,10 @@ class PostDetail(APIView):
                 post.is_active = False
                 post.save()
 
-                try:
-                    return Response({'message': 'successfully deleted',
-                                     }, status=status.HTTP_204_NO_CONTENT
-                                    )
-                except Exception as e:
-                    return Response({'message': 'failed', 'error': True, 'code': 500,
-                                     })
+                return Response({'message': 'successfully deleted',
+                                 }, status=status.HTTP_204_NO_CONTENT
+                                )
+
             return Response({"message": 'No post found', 'error': False, })
 
         return Response({"message": "You do not have permission to delete"})
@@ -166,7 +164,6 @@ class ViewComments(APIView):
 
             posts = Post.objects.get(id=pk)
             post_serializer = PostSerializer(posts)
-
             comment = posts.comment_set.all().order_by('-id')
             comments = comment.values('name', 'body')
 

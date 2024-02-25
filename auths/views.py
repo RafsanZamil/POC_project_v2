@@ -37,10 +37,8 @@ class RegisterView(APIView):
                 email_from = settings.EMAIL_HOST_USER
                 recipient_list = [request.data.get("email"), ]
                 otp = int(random.randint(1000, 9999))
-                print(otp)
                 message = "your otp key is:  {}".format(otp)
                 email = request.data.get("email")
-                print(email)
                 redis_client.set(email, otp, 36000)
 
                 EmailMessage(subject, message, email_from, recipient_list, connection=connection).send()
@@ -72,7 +70,6 @@ class VerifyOTP(APIView):
                         return Response({'message': 'OTP verified successfully.'}, status=status.HTTP_200_OK)
                     else:
 
-                        # OTP is invalid
                         return Response({'error': 'Invalid OTP.'}, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response({"message": "Invalid email or otp"}, status=401)
