@@ -32,7 +32,7 @@ class PostListAPIVIEW(APIView):
     search_fields = ['body', 'title']
 
     def get(self, request):
-        posts = Post.objects.all()
+        posts = Post.objects.all().filter(is_active=True)
         paginator = Paginator(posts, 5)
         page = request.GET.get('page', 1)
         result = paginator.get_page(page)
@@ -78,9 +78,9 @@ class SearchAPIVIEW(APIView):
         filter_by = request.query_params.get('search')
         if filter_by:
             posts = Post.objects.filter(
-                Q(title__icontains=filter_by) | Q(body__icontains=filter_by))
+                Q(title__icontains=filter_by) | Q(body__icontains=filter_by)).filter(is_active=True)
         else:
-            posts = Post.objects.all()
+            posts = Post.objects.filter(is_active=True)
 
         post_serializer = PostSerializer(posts, many=True, context={'request': request})
 
@@ -91,14 +91,14 @@ class SearchAPIVIEW(APIView):
 class PostDetailAPIVIEW(APIView):
 
     def get(self, request, pk):
-        posts = Post.objects.filter(pk=pk, is_active=True)
-        if posts:
+        try:
+            posts = Post.objects.get(pk=pk, is_active=True)
             comments = posts.comment_set.all()
             comments = comments.values('name', 'body')
             post_serializer = PostSerializer(posts)
             return Response({'message': 'success', 'result': {'items': post_serializer.data, 'comments': comments}},
                             status=status.HTTP_200_OK)
-        else:
+        except Post.DoesNotExist:
             return Response({'message': 'Post does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk, ):
@@ -144,7 +144,7 @@ class ViewCommentsAPIVIEW(APIView):
 
         try:
 
-            posts = Post.objects.filter(id=pk, )
+            posts = Post.objects.get(id=pk, )
             post_serializer = PostSerializer(posts)
             comment = posts.comment_set.all().order_by('-id')
             comments = comment.values('name', 'body')
