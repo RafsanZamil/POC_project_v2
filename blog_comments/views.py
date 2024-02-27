@@ -14,20 +14,17 @@ class CreateComment(APIView):
         request_data = dict(request.data)
         request_data["comment_author"] = request.user.id
         post_id = request_data.get("post")
+        post = Post.objects.filter(pk=post_id, is_active=True)
+        if post:
+            serializer = CommentSerializer(data=request_data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'comment created ',
+                                 'result': {'items': serializer.data, }}, status=status.HTTP_201_CREATED)
 
-        # Check if post exists and is active
-        try:
-            post = Post.objects.get(pk=post_id, is_active=True)
-        except Post.DoesNotExist:
-            return Response({"error": "Post does not exist."}, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = CommentSerializer(data=request_data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'comment created ',
-                             'result': {'items': serializer.data, }}, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"message": "Post does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
 
 class CommentDetail(APIView):
@@ -46,22 +43,22 @@ class CommentDetail(APIView):
     def put(self, request, pk):
 
         comment = self.get_object(pk, )
-
         if self.request.user.id == comment.comment_author_id:
             if comment:
 
-                serializer = CommentSerializer(comment, data=request.data,partial=True)
+                serializer = CommentSerializer(comment, data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
 
                     return Response({'message': 'successfully updated',
                                      'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
                 else:
-                    return Response({'message': 'invalid', 'result': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message': 'invalid', 'result': serializer.errors},
+                                    status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({"message": 'No comment found', 'error': False, })
+            return Response({"message": 'No comment found'}, status=status.HTTP_404_NOT_FOUND)
 
-        return Response({"message": "You do not have permission to update"})
+        return Response({"message": "You do not have permission to update"}, status=status.HTTP_401_UNAUTHORIZED)
 
     def delete(self, request, pk, ):
 
@@ -74,6 +71,6 @@ class CommentDetail(APIView):
                                  }, status=status.HTTP_204_NO_CONTENT
                                 )
 
-            return Response({"message": 'No comment found', 'error': False, })
+            return Response({"message": 'No comment found', }, status=status.HTTP_404_NOT_FOUND)
 
-        return Response({"message": "You do not have permission to delete"})
+        return Response({"message": "You do not have permission to delete"}, status=status.HTTP_401_UNAUTHORIZED)

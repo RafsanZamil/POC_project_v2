@@ -27,9 +27,6 @@ class PostCreate(APIView):
         return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# View all posts
-
-
 class PostList(APIView):
     pagination_class = PageNumberPagination
     filter_backends = [filters.SearchFilter]
@@ -42,7 +39,7 @@ class PostList(APIView):
         result = paginator.get_page(page)
 
         if int(page) >= 2 and not request.user.is_authenticated:
-            return Response({'You need to login to see more posts': 'fail', 'error': True, 'code': 400})
+            return Response({'message': 'You need to login to see more posts'}, status=status.HTTP_401_UNAUTHORIZED)
 
         post_serializer = PostSerializer(result, many=True, context={'request': request})
 
@@ -57,9 +54,9 @@ class PostList(APIView):
             if result.has_next():
                 next_page_url = reverse('view_post') + f'?page={result.next_page_number()}'
 
-            return Response({'message': 'success', 'error': False, 'code': 200,
+            return Response({'message': 'success',
                              'result': {'items': post_serializer.data, 'previous': previous_page_url,
-                                        'next': next_page_url}})
+                                        'next': next_page_url}}, status=status.HTTP_200_OK)
 
         else:
             previous_page_url = None
@@ -67,13 +64,13 @@ class PostList(APIView):
             if count <= 5:
                 next_page_url = None
 
-                return Response({'message': 'success', 'error': False, 'code': 200,
+                return Response({'message': 'success', 'error': False,
                                  'result': {'items': post_serializer.data, 'previous': previous_page_url,
-                                            'next': next_page_url}})
+                                            'next': next_page_url}}, status=status.HTTP_200_OK)
             next_page_url = reverse('view_post') + f'?page={result.next_page_number()}'
-            return Response({'message': 'success', 'error': False, 'code': 200,
+            return Response({'message': 'success',
                              'result': {'items': post_serializer.data, 'previous': previous_page_url,
-                                        'next': next_page_url}})
+                                        'next': next_page_url}}, status=status.HTTP_200_OK)
 
 
 class Search(APIView):
@@ -92,7 +89,6 @@ class Search(APIView):
                          'result': {'items': post_serializer.data, }}, status=status.HTTP_200_OK)
 
 
-# view post details, update and delete posts
 class PostDetail(APIView):
 
     def get_object(self, pk):
@@ -127,8 +123,8 @@ class PostDetail(APIView):
                 else:
                     return Response({'message': post_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({'message': 'No Post Found', 'error': True, 'code': 400})
-        return Response({"message": "You do not have permission to update"})
+            return Response({'message': 'No Post Found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "You do not have permission to update"}, status=status.HTTP_401_UNAUTHORIZED)
 
     def delete(self, request, pk):
 
@@ -142,9 +138,9 @@ class PostDetail(APIView):
                                  }, status=status.HTTP_204_NO_CONTENT
                                 )
 
-            return Response({"message": 'No post found', 'error': False, })
+            return Response({"message": 'No post found'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({"message": "You do not have permission to delete"})
+        return Response({"message": "You do not have permission to delete"}, status=status.HTTP_403_FORBIDDEN)
 
 
 class ViewComments(APIView):
@@ -171,5 +167,5 @@ class ViewComments(APIView):
                              'result': {'items': post_serializer.data, "comment": comments, }},
                             status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'message': 'post not found', 'error': True,
-                             })
+            return Response({'message': 'post not found',
+                             }, status=status.HTTP_400_BAD_REQUEST)

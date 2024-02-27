@@ -59,8 +59,8 @@ REST_FRAMEWORK = {
 
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 5,
-# 'DEFAULT_PAGINATION_CLASS': 'POC_project_v2.apps.core.pagination.CustomPagination',
-#     'PAGE_SIZE': 100,
+    # 'DEFAULT_PAGINATION_CLASS': 'POC_project_v2.apps.core.pagination.CustomPagination',
+    #     'PAGE_SIZE': 100,
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -110,9 +110,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'POC_project_v2.wsgi.application'
 
 # Redis configuration
-REDIS_HOST = 'localhost' # Replace with your Redis server host
+REDIS_HOST = 'localhost'  # Replace with your Redis server host
 REDIS_PORT = 6379  # Replace with your Redis server port
-REDIS_DB = 0 # Replace with your Redis database number
+REDIS_DB = 0  # Replace with your Redis database number
+
 
 # Database
 
@@ -174,8 +175,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 from datetime import timedelta
-
-...
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1260),
