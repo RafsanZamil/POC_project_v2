@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from POC_project_v2 import settings
 from .models import CustomUser
 from .serializers import MyTokenObtainPairSerializer
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer
 from rest_framework import status
@@ -52,7 +52,7 @@ class VerifyOTP(APIView):
         try:
             stored_otp = redis_client.get(emails)
             if not stored_otp:
-                return Response({"message": "Invalid email or otp"}, status=401)
+                return Response({"message": "Invalid email or otp"}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 stored_otp = redis_client.get(emails)
                 stored_otp = int(stored_otp.decode("utf-8"))
