@@ -19,7 +19,7 @@ class MyObtainTokenPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
-class RegisterView(APIView):
+class RegisterAPIVIEW(APIView):
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -46,7 +46,7 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class VerifyOTP(APIView):
+class VerifyOTPAPIVIEW(APIView):
     def post(self, request):
         emails = request.data.get("email")
         try:
@@ -73,6 +73,5 @@ class VerifyOTP(APIView):
                         return Response({'error': 'Invalid OTP.'}, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response({"message": "Invalid email or otp"}, status=status.HTTP_400_BAD_REQUEST)
-
 
 

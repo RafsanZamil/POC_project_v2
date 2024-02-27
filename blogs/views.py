@@ -5,13 +5,12 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.reverse import reverse
 from blogs.models import Post
 from blogs.serializers import PostSerializer
-from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
 
-class PostCreate(APIView):
+class PostCreateAPIVIEW(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
@@ -27,7 +26,7 @@ class PostCreate(APIView):
         return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PostList(APIView):
+class PostListAPIVIEW(APIView):
     pagination_class = PageNumberPagination
     filter_backends = [filters.SearchFilter]
     search_fields = ['body', 'title']
@@ -73,7 +72,7 @@ class PostList(APIView):
                                         'next': next_page_url}}, status=status.HTTP_200_OK)
 
 
-class Search(APIView):
+class SearchAPIVIEW(APIView):
 
     def get(self, request):
         filter_by = request.query_params.get('search')
@@ -89,32 +88,26 @@ class Search(APIView):
                          'result': {'items': post_serializer.data, }}, status=status.HTTP_200_OK)
 
 
-class PostDetail(APIView):
-
-    def get_object(self, pk):
-
-        try:
-            posts = Post.objects.get(pk=pk, is_active=True)
-            return posts
-
-        except Post.DoesNotExist:
-            raise Http404
+class PostDetailAPIVIEW(APIView):
 
     def get(self, request, pk):
-
-        posts = self.get_object(pk)
-        comments = posts.comment_set.all()
-        comments = comments.values('name', 'body')
-        post_serializer = PostSerializer(posts)
-        return Response({'message': 'success', 'result': {'items': post_serializer.data, 'comments': comments}},
-                        status=status.HTTP_200_OK)
+        posts = Post.objects.filter(pk=pk, is_active=True)
+        if posts:
+            comments = posts.comment_set.all()
+            comments = comments.values('name', 'body')
+            post_serializer = PostSerializer(posts)
+            return Response({'message': 'success', 'result': {'items': post_serializer.data, 'comments': comments}},
+                            status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Post does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk, ):
-        post = self.get_object(pk, )
-        if self.request.user == post.author:
-            request_data = dict(request.data)
-            request_data["author"] = request.user.id
-            if post:
+        try:
+            post = Post.objects.get(pk=pk, is_active=True)
+
+            if self.request.user.id == post.author_id:
+                request_data = dict(request.data)
+                request_data["author"] = request.user.id
                 post_serializer = PostSerializer(post, data=request.data, partial=True)
                 if post_serializer.is_valid():
                     post_serializer.save()
@@ -123,42 +116,35 @@ class PostDetail(APIView):
                 else:
                     return Response({'message': post_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({'message': 'No Post Found'}, status=status.HTTP_404_NOT_FOUND)
-        return Response({"message": "You do not have permission to update"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"message": "You do not have permission to update"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except Post.DoesNotExist:
+            return Response({"message": "Post does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
 
-        post = self.get_object(pk)
-        if self.request.user == post.author:
-            if post:
-                post.is_active = False
-                post.save()
+        post = Post.objects.filter(pk=pk, is_active=True)
+        if post:
+            if self.request.user == post[0].author:
+                post[0].is_active = False
+                post[0].save()
 
-                return Response({'message': 'successfully deleted',
+                return Response({'message': 'Successfully Deleted',
                                  }, status=status.HTTP_204_NO_CONTENT
                                 )
 
-            return Response({"message": 'No post found'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "You do not have permission to delete"}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({"message": 'Post does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({"message": "You do not have permission to delete"}, status=status.HTTP_403_FORBIDDEN)
 
-
-class ViewComments(APIView):
-
-    def get_object(self, pk):
-
-        try:
-            post = Post.objects.get(pk=pk)
-            return post
-
-        except Post.DoesNotExist:
-            raise Http404
+class ViewCommentsAPIVIEW(APIView):
 
     def get(self, request, pk):
 
         try:
 
-            posts = Post.objects.get(id=pk)
+            posts = Post.objects.filter(id=pk, )
             post_serializer = PostSerializer(posts)
             comment = posts.comment_set.all().order_by('-id')
             comments = comment.values('name', 'body')
@@ -167,5 +153,5 @@ class ViewComments(APIView):
                              'result': {'items': post_serializer.data, "comment": comments, }},
                             status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'message': 'post not found',
+            return Response({'message': "Post does not exist",
                              }, status=status.HTTP_400_BAD_REQUEST)
