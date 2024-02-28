@@ -1,7 +1,7 @@
 from django.core.paginator import Paginator
 from django.db.models import Q
 from rest_framework import filters
-from rest_framework.pagination import PageNumberPagination
+
 from rest_framework.reverse import reverse
 from blogs.models import Post
 from blogs.serializers import PostSerializer
