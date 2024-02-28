@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from POC_project_v2 import settings
 from .models import CustomUser
-from .serializers import MyTokenObtainPairSerializer
+from .serializers import MyTokenObtainPairSerializer, ForgotPasswordSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer, ChangePasswordSerializer
@@ -65,7 +65,6 @@ class VerifyOTPAPIVIEW(APIView):
                         user = (CustomUser.objects.filter(email=emails).values("id"))
                         user.update(is_active=True)
                         redis_client.delete(emails)
-                        print(user)
 
                         return Response({'message': 'OTP verified successfully.'}, status=status.HTTP_200_OK)
                     else:
@@ -75,16 +74,66 @@ class VerifyOTPAPIVIEW(APIView):
             return Response({"message": "Invalid email or otp"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ChangePasswordAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
+class ForgotPasswordAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        serializer = ChangePasswordSerializer(data=request.data)
-        if serializer.is_valid():
-            user = request.user
-            if user.check_password(serializer.data.get('old_password')):
-                user.set_password(serializer.data.get('new_password'))
-                user.save()
-                return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
-            return Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        email = request.data.get("email")
+        stored_otp = redis_client.get(email)
+        if stored_otp:
+            redis_client.delete(email)
+        if CustomUser.objects.filter(email=email).exists():
+            with get_connection(
+
+                    host=settings.EMAIL_HOST,
+                    port=settings.EMAIL_PORT,
+                    username=settings.EMAIL_HOST_USER,
+                    password=settings.EMAIL_HOST_PASSWORD,
+                    use_tls=settings.EMAIL_USE_TLS
+            ) as connection:
+                subject = "reset password"
+                email_from = settings.EMAIL_HOST_USER
+                recipient_list = [email]
+
+                otp = int(random.randint(1000, 9999))
+                message = "your otp key for reset password is:  {}".format(otp)
+                redis_client.set(email, otp, 36000)
+
+                EmailMessage(subject, message, email_from, recipient_list, connection=connection).send()
+                return Response({'Message': "OTP sent Successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Email not found"}, status=status.HTTP_204_NO_CONTENT)
+
+
+class ChangePasswordAPIView(APIView):
+    def post(self, request):
+        emails = request.data.get("email")
+
+        stored_otp = redis_client.get(emails)
+
+        if not stored_otp:
+
+            return Response({"message": "Invalid email or otp"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            stored_otp = redis_client.get(emails)
+            print("stored_otp", stored_otp)
+            stored_otp = int(stored_otp.decode("utf-8"))
+
+            submitted_otp = request.data.get("OTP")
+            try:
+                submitted_otp = int(submitted_otp)
+
+                if stored_otp == submitted_otp:
+                    serializer = ForgotPasswordSerializer(data=request.data)
+                    if serializer.is_valid():
+                        user = request.user
+                        if user.check_password(serializer.data.get('old_password')):
+                            user.set_password(serializer.data.get('new_password'))
+                            user.save()
+                            redis_client.delete(emails)
+                            return Response({'message': 'Password Changed'}, status=status.HTTP_200_OK)
+                        return Response({'message': 'Wrong Password'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                else:
+
+                    return Response({'error': 'OTP Mismatched.'}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({'message': "Enter valid otp"}, status=status.HTTP_400_BAD_REQUEST)
