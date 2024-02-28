@@ -1,7 +1,5 @@
 from django.core.paginator import Paginator
 from django.db.models import Q
-from rest_framework import filters
-
 from rest_framework.reverse import reverse
 from blogs.models import Post
 from blogs.serializers import PostSerializer
@@ -27,9 +25,6 @@ class PostCreateAPIVIEW(APIView):
 
 
 class PostListAPIVIEW(APIView):
-    # # pagination_class = PageNumberPagination
-    # filter_backends = [filters.SearchFilter]
-    # search_fields = ['body', 'title']
 
     def get(self, request):
         posts = Post.objects.all().filter(is_active=True)

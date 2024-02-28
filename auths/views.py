@@ -8,8 +8,8 @@ from .models import CustomUser
 from .serializers import MyTokenObtainPairSerializer, ForgotPasswordSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import UserSerializer, ChangePasswordSerializer
-from rest_framework import status, permissions
+from .serializers import UserSerializer
+from rest_framework import status
 
 redis_client = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
@@ -106,7 +106,6 @@ class ForgotPasswordAPIView(APIView):
 class ChangePasswordAPIView(APIView):
     def post(self, request):
         emails = request.data.get("email")
-
         stored_otp = redis_client.get(emails)
 
         if not stored_otp:
@@ -114,9 +113,7 @@ class ChangePasswordAPIView(APIView):
             return Response({"message": "Invalid email or otp"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             stored_otp = redis_client.get(emails)
-            print("stored_otp", stored_otp)
             stored_otp = int(stored_otp.decode("utf-8"))
-
             submitted_otp = request.data.get("OTP")
             try:
                 submitted_otp = int(submitted_otp)
@@ -133,7 +130,6 @@ class ChangePasswordAPIView(APIView):
                         return Response({'message': 'Wrong Password'}, status=status.HTTP_400_BAD_REQUEST)
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 else:
-
                     return Response({'error': 'OTP Mismatched.'}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({'message': "Enter valid otp"}, status=status.HTTP_400_BAD_REQUEST)
