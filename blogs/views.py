@@ -27,9 +27,9 @@ class PostCreateAPIVIEW(APIView):
 
 
 class PostListAPIVIEW(APIView):
-    pagination_class = PageNumberPagination
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['body', 'title']
+    # # pagination_class = PageNumberPagination
+    # filter_backends = [filters.SearchFilter]
+    # search_fields = ['body', 'title']
 
     def get(self, request):
         posts = Post.objects.all().filter(is_active=True)
