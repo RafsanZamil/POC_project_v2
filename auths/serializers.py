@@ -36,5 +36,5 @@ class ChangePasswordSerializer(serializers.Serializer):
 class ForgotPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     OTP = serializers.IntegerField(required=True)
-    old_password = serializers.CharField(required=True)
+    #old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)

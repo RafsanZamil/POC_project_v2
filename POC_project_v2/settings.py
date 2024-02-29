@@ -72,6 +72,7 @@ REST_FRAMEWORK = {
 
 }
 
+
 AUTH_USER_MODEL = 'auths.CustomUser'
 POST_MODEL = 'blogs.Post'
 COMMENT_MODEL = 'blog_comments.Comment'

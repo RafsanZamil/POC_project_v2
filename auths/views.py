@@ -1,5 +1,6 @@
 import random
 import redis
+from django.contrib.auth.hashers import make_password
 from django.core.mail import EmailMessage, get_connection
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -117,17 +118,14 @@ class ChangePasswordAPIView(APIView):
             submitted_otp = request.data.get("OTP")
             try:
                 submitted_otp = int(submitted_otp)
-
                 if stored_otp == submitted_otp:
                     serializer = ForgotPasswordSerializer(data=request.data)
                     if serializer.is_valid():
-                        user = request.user
-                        if user.check_password(serializer.data.get('old_password')):
-                            user.set_password(serializer.data.get('new_password'))
-                            user.save()
-                            redis_client.delete(emails)
-                            return Response({'message': 'Password Changed'}, status=status.HTTP_200_OK)
-                        return Response({'message': 'Wrong Password'}, status=status.HTTP_400_BAD_REQUEST)
+                        user = CustomUser.objects.get(email=emails)
+                        user.password = make_password(serializer.data.get('new_password'))
+                        user.save()
+                        redis_client.delete(emails)
+                        return Response({'message': 'Password Changed'}, status=status.HTTP_200_OK)
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'error': 'OTP Mismatched.'}, status=status.HTTP_400_BAD_REQUEST)
