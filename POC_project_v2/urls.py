@@ -25,7 +25,8 @@ urlpatterns = [
 
     path('api/', include('auths.urls')),
     path('api/', include('blogs.urls')),
-    path('api/', include('blog_comments.urls'))
+    path('api/', include('blog_comments.urls')),
+    path('api/', include('feed.urls', ))
 
 
 ]

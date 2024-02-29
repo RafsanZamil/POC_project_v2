@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'auths',
     'blogs',
+    'feed',
     'django_filters',
     'blog_comments',
     "django_extensions",
