@@ -6,11 +6,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from POC_project_v2 import settings
 from .models import CustomUser
-from .serializers import MyTokenObtainPairSerializer, ForgotPasswordSerializer
+from .serializers import MyTokenObtainPairSerializer, ForgotPasswordSerializer, ChangePasswordSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer
-from rest_framework import status
+from rest_framework import status, permissions
 
 redis_client = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
@@ -34,11 +34,11 @@ class RegisterAPIVIEW(APIView):
                     password=settings.EMAIL_HOST_PASSWORD,
                     use_tls=settings.EMAIL_USE_TLS
             ) as connection:
-                subject = "verification"
+                subject = "Email Verification for Blog Application"
                 email_from = settings.EMAIL_HOST_USER
                 recipient_list = [request.data.get("email"), ]
                 otp = int(random.randint(1000, 9999))
-                message = "your otp key is:  {}".format(otp)
+                message = "your one time otp key for account verification :  {}".format(otp)
                 email = request.data.get("email")
                 redis_client.set(email, otp, 36000)
 
@@ -104,7 +104,7 @@ class ForgotPasswordAPIView(APIView):
             return Response({"message": "Email not found"}, status=status.HTTP_204_NO_CONTENT)
 
 
-class ChangePasswordAPIView(APIView):
+class ResetPasswordAPIView(APIView):
     def post(self, request):
         emails = request.data.get("email")
         stored_otp = redis_client.get(emails)
@@ -131,3 +131,18 @@ class ChangePasswordAPIView(APIView):
                     return Response({'error': 'OTP Mismatched.'}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({'message': "Enter valid otp"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = ChangePasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            if user.check_password(serializer.data.get('old_password')):
+                user.set_password(serializer.data.get('new_password'))
+                user.save()
+                return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+            return Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

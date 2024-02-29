@@ -28,13 +28,12 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
-
-
 class ForgotPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     OTP = serializers.IntegerField(required=True)
-    #old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
