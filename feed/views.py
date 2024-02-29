@@ -67,23 +67,17 @@ class FeedAPIVIEW(APIView):
 
     def get(self, request):
 
-        global posts
         user = request.user.id
-        l = []
+        my_list = []
         following = FollowUser.objects.filter(followed_by=user)
         for i in following:
             my_dict = model_to_dict(i)
-            l.append(my_dict)
-        following_list = [i['user_id'] for i in l]
-        print(following_list)
-        all_posts = []
-        # for i in following_list:
-        #     print(i)
-        #     posts = Post.objects.filter(author=i)
-        #     print(posts)
-        #     all_posts.append(posts)
+            my_list.append(my_dict)
+        following_list = [i['user_id'] for i in my_list]
+        if following_list:
+            all_posts = Post.objects.filter(author__id__in=following_list)
+            serializer = PostSerializer(all_posts, many=True)
 
-        all_posts = Post.objects.filter(author__id__in=following_list)
-        serializer = PostSerializer(all_posts, many=True)
-
-        return Response({"posts": serializer.data})
+            return Response({"posts": serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({"Message": "Follow someone to see their posts"}, status=status.HTTP_200_OK)
