@@ -75,11 +75,15 @@ class FeedAPIVIEW(APIView):
             my_dict = model_to_dict(i)
             l.append(my_dict)
         following_list = [i['user_id'] for i in l]
+        print(following_list)
+        all_posts = []
+        # for i in following_list:
+        #     print(i)
+        #     posts = Post.objects.filter(author=i)
+        #     print(posts)
+        #     all_posts.append(posts)
 
-        for i in following_list:
-            posts = Post.objects.filter(author=i)
-
-        serializer = PostSerializer(posts, many=True)
+        all_posts = Post.objects.filter(author__id__in=following_list)
+        serializer = PostSerializer(all_posts, many=True)
 
         return Response({"posts": serializer.data})
-
