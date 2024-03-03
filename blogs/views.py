@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
+from like.models import Like
+
 
 class PostCreateAPIVIEW(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -31,7 +33,6 @@ class PostListAPIVIEW(APIView):
         paginator = Paginator(posts, 5)
         page = request.GET.get('page', 1)
         result = paginator.get_page(page)
-
         if int(page) >= 2 and not request.user.is_authenticated:
             return Response({'message': 'You need to login to see more posts'}, status=status.HTTP_401_UNAUTHORIZED)
 
