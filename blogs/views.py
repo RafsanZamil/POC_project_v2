@@ -88,7 +88,7 @@ class PostDetailAPIVIEW(APIView):
     def get(self, request, pk):
         try:
             posts = Post.objects.get(pk=pk, is_active=True)
-            comments = posts.comment_set.all()
+            comments = posts.comments.all()
             comments = comments.values('content')
             post_serializer = PostSerializer(posts)
             return Response({'message': 'success', 'result': {'items': post_serializer.data, 'comments': comments}},
@@ -140,9 +140,8 @@ class ViewCommentsAPIVIEW(APIView):
         try:
 
             posts = Post.objects.get(id=pk, )
-            print(posts)
             post_serializer = PostSerializer(posts)
-            comment = posts.comment_set.all().order_by('-id')
+            comment = posts.comments.all().order_by('-id')
             comments = comment.values('content')
 
             return Response({'message': 'success',

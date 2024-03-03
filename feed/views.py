@@ -11,8 +11,19 @@ from django.forms.models import model_to_dict
 
 # Create your views here
 
+class PostLikeAPIVIEW(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request,pk):
+        request_data = dict(request.data)
+        request_data["followed_by"] = request.user.id
+        user = pk
+        request_data["user_id"] = user
+
+
 class FollowAPIVIEW(APIView):
     permission_classes = [permissions.IsAuthenticated]
+
 
     def post(self, request, pk):
         request_data = dict(request.data)
@@ -77,7 +88,10 @@ class FeedAPIVIEW(APIView):
         if following_list:
             all_posts = Post.objects.filter(author__id__in=following_list)
             serializer = PostSerializer(all_posts, many=True)
+            # print(serializer.data)
+            # comments = all_posts[4].comments.all()
+            # print(comments)
 
-            return Response({"posts": serializer.data}, status=status.HTTP_200_OK)
+            return Response({"posts": serializer.data, }, status=status.HTTP_200_OK)
         else:
             return Response({"Message": "Follow someone to see their posts"}, status=status.HTTP_200_OK)
