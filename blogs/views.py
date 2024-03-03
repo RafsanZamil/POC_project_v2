@@ -99,8 +99,10 @@ class PostDetailAPIVIEW(APIView):
     def put(self, request, pk, ):
         try:
             post = Post.objects.get(pk=pk, is_active=True)
-
+            print(self.request.user.id)
+            print(post.author_id)
             if self.request.user.id == post.author_id:
+
                 request_data = dict(request.data)
                 request_data["author"] = request.user.id
                 post_serializer = PostSerializer(post, data=request.data, partial=True)

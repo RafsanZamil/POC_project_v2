@@ -78,6 +78,7 @@ class FeedAPIVIEW(APIView):
     def get(self, request):
 
         user = request.user.id
+        print(user)
         my_list = []
         following = FollowUser.objects.filter(followed_by=user)
         for i in following:
@@ -87,7 +88,7 @@ class FeedAPIVIEW(APIView):
         if following_list:
 
             all_posts = Post.objects.filter(author__id__in=following_list,is_active=True)
-            serializer = PostCommentSerializer(all_posts, many=True)
+            serializer = PostCommentSerializer(all_posts, many=True, partial=True)
 
             return Response({"data": serializer.data}, status=status.HTTP_200_OK)
         else:
