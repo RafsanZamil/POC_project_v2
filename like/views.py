@@ -21,9 +21,9 @@ class LikeAPIVIEW(APIView):
 
         author = Post.objects.filter(pk=post).values("author_id")
         author = author[0].get("author_id")
-        print("author:",author)
+        print("author:", author)
         user = request.user.id
-        print("user:",user)
+        print("user:", user)
 
         my_list = []
         following = FollowUser.objects.filter(followed_by=user)

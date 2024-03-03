@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from auths.models import CustomUser
 from .models import Post
 

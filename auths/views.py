@@ -26,6 +26,7 @@ class RegisterAPIVIEW(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
+
             with get_connection(
 
                     host=settings.EMAIL_HOST,
