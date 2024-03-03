@@ -1,7 +1,11 @@
 from rest_framework import serializers
 
 from auths.models import CustomUser
+from blog_comments.models import Comment
+from blogs.models import Post
 from feed.models import FollowUser
+from auths.serializers import UserSerializer
+from blog_comments.serializers import CommentSerializer
 
 
 class FollowSerializer(serializers.Serializer):
@@ -10,3 +14,16 @@ class FollowSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return FollowUser.objects.create(**validated_data)
+
+
+class PostCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = "__all__"
+        extra_kwargs = {'is_active': {'write_only': True}}
+
+    def to_representation(self, instance):
+        response = super(PostCommentSerializer, self).to_representation(instance)
+        response['author'] = UserSerializer(instance.author).data
+        response['comment'] = CommentSerializer(Comment.objects.filter(post=instance), many=True).data
+        return response

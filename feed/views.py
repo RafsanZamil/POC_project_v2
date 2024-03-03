@@ -2,11 +2,16 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from auths.models import CustomUser
+from blog_comments.models import Comment
+from blog_comments.serializers import CommentSerializer
 from blogs.models import Post
 from blogs.serializers import PostSerializer
 from feed.models import FollowUser
-from feed.serializers import FollowSerializer
+from feed.serializers import FollowSerializer, PostCommentSerializer
 from django.forms.models import model_to_dict
+
+from blogs.models import Post
+from blog_comments.models import Comment
 
 
 # Create your views here
@@ -80,12 +85,10 @@ class FeedAPIVIEW(APIView):
             my_list.append(my_dict)
         following_list = [i['user_id'] for i in my_list]
         if following_list:
-            all_posts = Post.objects.filter(author__id__in=following_list)
-            serializer = PostSerializer(all_posts, many=True)
-            # print(serializer.data)
-            # comments = all_posts[4].comments.all()
-            # print(comments)
 
-            return Response({"posts": serializer.data, }, status=status.HTTP_200_OK)
+            all_posts = Post.objects.filter(author__id__in=following_list,is_active=True)
+            serializer = PostCommentSerializer(all_posts, many=True)
+
+            return Response({"data": serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({"Message": "Follow someone to see their posts"}, status=status.HTTP_200_OK)
