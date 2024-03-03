@@ -20,9 +20,11 @@ class FollowAPIVIEW(APIView):
         request_data["followed_by"] = request.user.id
         user = pk
         request_data["user_id"] = user
-        user_exists = CustomUser.objects.get(pk=user)
-        follower = request_data.get("followed_by")
-        if user_exists:
+        print(request_data)
+        try:
+            user_exists = CustomUser.objects.get(pk=user)
+            follower = request_data.get("followed_by")
+
             follow = FollowUser.objects.filter(user_id=user_exists.id)
             follow = follow.filter(followed_by=follower)
             if follow.count() > 0:
@@ -31,12 +33,13 @@ class FollowAPIVIEW(APIView):
             else:
                 serializer = FollowSerializer(data=request_data)
                 if serializer.is_valid():
+                    print("true")
                     serializer.save()
                     return Response({'message': 'You followed someone ',
                                      'result': {'items': serializer.data, }}, status=status.HTTP_201_CREATED)
 
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
+        except Exception as e:
             return Response({"message": "The person does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -48,9 +51,10 @@ class UnfollowAPIVIEW(APIView):
         request_data["followed_by"] = request.user.id
         user = pk
         request_data["user_id"] = user
-        user_exists = CustomUser.objects.get(pk=user)
-        follower = request_data.get("followed_by")
-        if user_exists:
+        try:
+            user_exists = CustomUser.objects.get(pk=user)
+            follower = request_data.get("followed_by")
+
             follow = FollowUser.objects.filter(user_id=user_exists.id)
             follow = follow.filter(followed_by=follower)
             print(follow)
@@ -59,7 +63,7 @@ class UnfollowAPIVIEW(APIView):
                 return Response({"message": "You unfollowed this person."}, status=status.HTTP_204_NO_CONTENT)
             else:
                 return Response({"message": "You didn't follow this person."}, status=status.HTTP_400_BAD_REQUEST)
-        else:
+        except Exception as e:
             return Response({"message": "The person does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
 

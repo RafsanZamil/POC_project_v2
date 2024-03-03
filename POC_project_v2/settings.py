@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'auths',
     'blogs',
     'feed',
+    'like',
     'django_filters',
     'blog_comments',
     "django_extensions",
