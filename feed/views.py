@@ -11,19 +11,9 @@ from django.forms.models import model_to_dict
 
 # Create your views here
 
-class PostLikeAPIVIEW(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request,pk):
-        request_data = dict(request.data)
-        request_data["followed_by"] = request.user.id
-        user = pk
-        request_data["user_id"] = user
-
 
 class FollowAPIVIEW(APIView):
     permission_classes = [permissions.IsAuthenticated]
-
 
     def post(self, request, pk):
         request_data = dict(request.data)
