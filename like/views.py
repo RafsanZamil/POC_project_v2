@@ -8,8 +8,6 @@ from like.models import Like
 from like.serializers import LikeSerializer
 
 
-# Create your views here.
-
 class LikeAPIVIEW(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -31,13 +29,13 @@ class LikeAPIVIEW(APIView):
 
             if author in following_list:
                 post_exists = Post.objects.get(pk=post)
-                liker = request_data.get("liked_by")
+                liked_by = request_data.get("liked_by")
                 like = Like.objects.filter(post_id=post_exists.id)
-                like = like.filter(liked_by=liker)
-                print(like)
+                like = like.filter(liked_by=liked_by)
+
                 if like.count() > 0:
 
-                    return Response({"message": "already liked the post"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"message": "You already liked the post"}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     serializer = LikeSerializer(data=request_data)
 
@@ -51,7 +49,7 @@ class LikeAPIVIEW(APIView):
             else:
                 return Response({"message": "Follow the author to like his posts"}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({"message": "Post not exists"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "This Post not exists"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UnlikeAPIVIEW(APIView):
@@ -75,4 +73,4 @@ class UnlikeAPIVIEW(APIView):
                 return Response({"message": "You didn't liked this post"}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            return Response({"message": "The post does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "This post does not exist."}, status=status.HTTP_404_NOT_FOUND)
