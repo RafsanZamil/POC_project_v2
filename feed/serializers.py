@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, request
 from auths.models import CustomUser
 from blog_comments.models import Comment
 from blogs.models import Post
@@ -15,6 +15,14 @@ class FollowSerializer(serializers.Serializer):
         return FollowUser.objects.create(**validated_data)
 
 
+class LikeSerializer(serializers.Serializer):
+    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
+    liked_by = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+
+    def create(self, validated_data):
+        return Like.objects.create(**validated_data)
+
+
 class PostCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
@@ -23,14 +31,10 @@ class PostCommentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         response = super(PostCommentSerializer, self).to_representation(instance)
+        response['total_like'] = Like.objects.filter(post=instance).count()
         response['author'] = UserSerializer(instance.author).data
         response['comment'] = CommentSerializer(Comment.objects.filter(post=instance), many=True).data
         return response
 
 
-class LikeSerializer(serializers.Serializer):
-    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
-    liked_by = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
 
-    def create(self, validated_data):
-        return Like.objects.create(**validated_data)

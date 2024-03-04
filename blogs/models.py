@@ -1,12 +1,11 @@
-from django.conf import settings
 from django.db import models
+from auths.models import CustomUser
 
 
 class Post(models.Model):
-
     title = models.CharField(max_length=50)
     body = models.TextField()
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="books", on_delete=models.CASCADE, null=True,
+    author = models.ForeignKey(CustomUser, related_name="books", on_delete=models.CASCADE, null=True,
                                default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

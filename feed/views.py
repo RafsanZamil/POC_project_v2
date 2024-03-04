@@ -11,8 +11,7 @@ class FollowAPIVIEW(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        request_data = dict(request.data)
-        print(request_data)
+        request_data = dict()
         request_data["followed_by"] = request.user.id
         user_id = pk
         request_data["user_id"] = user_id
@@ -38,7 +37,7 @@ class UnfollowAPIVIEW(APIView):
     permissions_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        request_data = dict(request.data)
+        request_data = dict()
         request_data["followed_by"] = request.user.id
         user_id = pk
         request_data["user_id"] = user_id
@@ -53,6 +52,7 @@ class UnfollowAPIVIEW(APIView):
                 return Response({"message": "You didn't follow this person."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"message": f"{e}"}, status=status.HTTP_404_NOT_FOUND)
+
 
 class FeedAPIVIEW(APIView):
     permissions_classes = [permissions.IsAuthenticated]
@@ -72,8 +72,8 @@ class LikeAPIVIEW(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        request_data = dict(request.data)
-        request_data["liked_by"] = int(request.user.id)
+        request_data = dict()
+        request_data["liked_by"] = request.user.id
         post_id = pk
         request_data["post"] = post_id
         author = Post.objects.filter(pk=post_id).values("author_id")
@@ -81,6 +81,7 @@ class LikeAPIVIEW(APIView):
             author_id = author[0].get("author_id")
             follower_id = request.user.id
             following_list = list(FollowUser.objects.filter(followed_by=follower_id).values_list("user_id", flat=True))
+
             if author_id in following_list:
                 post_exists = Post.objects.get(pk=post_id)
                 liked_by = request_data.get("liked_by")
@@ -106,7 +107,7 @@ class UnlikeAPIVIEW(APIView):
     permissions_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        request_data = dict(request.data)
+        request_data = dict()
         request_data["liked_by"] = int(request.user.id)
         post_id = pk
         request_data["post"] = int(post_id)

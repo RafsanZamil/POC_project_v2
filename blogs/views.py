@@ -14,6 +14,7 @@ class PostCreateAPIVIEW(APIView):
     def post(self, request):
         request_data = dict(request.data)
         request_data["author"] = request.user.id
+
         post_serializer = PostSerializer(data=request_data)
         if post_serializer.is_valid():
             post_serializer.save()
