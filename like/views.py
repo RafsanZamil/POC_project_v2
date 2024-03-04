@@ -18,23 +18,18 @@ class LikeAPIVIEW(APIView):
         request_data["liked_by"] = int(request.user.id)
         post = pk
         request_data["post"] = int(post)
-
         author = Post.objects.filter(pk=post).values("author_id")
-        author = author[0].get("author_id")
-        print("author:", author)
-        user = request.user.id
-        print("user:", user)
+        if author:
+            author = author[0].get("author_id")
+            user = request.user.id
+            my_list = []
+            following = FollowUser.objects.filter(followed_by=user)
+            for i in following:
+                my_dict = model_to_dict(i)
+                my_list.append(my_dict)
+            following_list = [i['user_id'] for i in my_list]
 
-        my_list = []
-        following = FollowUser.objects.filter(followed_by=user)
-        for i in following:
-            my_dict = model_to_dict(i)
-            my_list.append(my_dict)
-        following_list = [i['user_id'] for i in my_list]
-
-        if author in following_list:
-
-            try:
+            if author in following_list:
                 post_exists = Post.objects.get(pk=post)
                 liker = request_data.get("liked_by")
                 like = Like.objects.filter(post_id=post_exists.id)
@@ -51,11 +46,12 @@ class LikeAPIVIEW(APIView):
                         return Response({'message': 'You liked the post ',
                                          'result': {'items': serializer.data, }}, status=status.HTTP_201_CREATED)
 
-            except Exception as e:
-                print(e)
-                return Response({"message": "Post not exists"}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({"message": "Follow the author to like his posts"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+            else:
+                return Response({"message": "Follow the author to like his posts"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"message": "Post not exists"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UnlikeAPIVIEW(APIView):
@@ -79,4 +75,4 @@ class UnlikeAPIVIEW(APIView):
                 return Response({"message": "You didn't liked this post"}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            return Response({"message": "The person does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "The post does not exist."}, status=status.HTTP_404_NOT_FOUND)

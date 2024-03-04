@@ -48,7 +48,7 @@ class RegisterAPIVIEW(APIView):
                 redis_client.set(email, otp, 36000)
 
                 EmailMessage(subject, message, email_from, recipient_list, connection=connection).send()
-            return Response({'Message': "User Created Successfully"}, status=status.HTTP_200_OK)
+            return Response({'Message': "OTP sent successfully. Verify to register."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
