@@ -6,8 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from POC_project_v2 import settings
 from .models import CustomUser
-from .serializers import MyTokenObtainPairSerializer, ForgotPasswordSerializer, ChangePasswordSerializer, \
-
+from .serializers import MyTokenObtainPairSerializer, ForgotPasswordSerializer, ChangePasswordSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer
