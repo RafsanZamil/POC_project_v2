@@ -31,7 +31,7 @@ class FollowAPIVIEW(APIView):
 
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({"message": "This person does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": f"{e}"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class UnfollowAPIVIEW(APIView):
@@ -52,8 +52,7 @@ class UnfollowAPIVIEW(APIView):
             else:
                 return Response({"message": "You didn't follow this person."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({"message": "The person does not exist."}, status=status.HTTP_404_NOT_FOUND)
-
+            return Response({"message": f"{e}"}, status=status.HTTP_404_NOT_FOUND)
 
 class FeedAPIVIEW(APIView):
     permissions_classes = [permissions.IsAuthenticated]
