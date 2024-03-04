@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from POC_project_v2 import settings
 from .models import CustomUser
 from .serializers import MyTokenObtainPairSerializer, ForgotPasswordSerializer, ChangePasswordSerializer, \
-    RegisterSerializer
+
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer
@@ -24,9 +24,14 @@ class MyObtainTokenPairView(TokenObtainPairView):
 class RegisterAPIVIEW(APIView):
 
     def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
+        email = request.data.get("email")
+        data = CustomUser.objects.filter(email=email, is_active=False)
+        if data:
+            data.delete()
 
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
             with get_connection(
 
                     host=settings.EMAIL_HOST,
@@ -44,41 +49,36 @@ class RegisterAPIVIEW(APIView):
                 redis_client.set(email, otp, 36000)
 
                 EmailMessage(subject, message, email_from, recipient_list, connection=connection).send()
-            return Response({'Message': "OTP sent Successfully"}, status=status.HTTP_200_OK)
+            return Response({'Message': "User Created Successfully"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyOTPAPIVIEW(APIView):
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        OTP = request.data.get("OTP")
-        if OTP:
-            if serializer.is_valid():
-                emails = request.data.get("email")
-                try:
-                    stored_otp = redis_client.get(emails)
+        emails = request.data.get("email")
+        try:
+            stored_otp = redis_client.get(emails)
+            if not stored_otp:
+                return Response({"message": "Invalid email or otp"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                stored_otp = redis_client.get(emails)
+                stored_otp = int(stored_otp.decode("utf-8"))
+                submitted_otp = request.data.get("OTP")
+                if submitted_otp:
+                    submitted_otp = int(submitted_otp)
 
-                    if not stored_otp:
-                        return Response({"message": "Invalid email or otp"}, status=status.HTTP_400_BAD_REQUEST)
+                    if stored_otp == submitted_otp:
+                        user = (CustomUser.objects.filter(email=emails).values("id"))
+                        user.update(is_active=True)
+                        redis_client.delete(emails)
+
+                        return Response({'message': 'OTP verified successfully.'}, status=status.HTTP_200_OK)
                     else:
-                        stored_otp = redis_client.get(emails)
-                        stored_otp = int(stored_otp.decode("utf-8"))
-                        submitted_otp = request.data.get("OTP")
-                        submitted_otp = int(submitted_otp)
-                        if stored_otp == submitted_otp:
-                            serializer.save()
-                            redis_client.delete(emails)
 
-                            return Response({'message': 'OTP verified successfully.'}, status=status.HTTP_200_OK)
-                        else:
-
-                            return Response({'error': 'Invalid OTP.'}, status=status.HTTP_400_BAD_REQUEST)
-
-                except:
-                    return Response({"message": "Register to get OTP "}, status=status.HTTP_400_BAD_REQUEST)
-
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"message": "Enter OTP"}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'error': 'Invalid OTP.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message': 'OTP not verified.'}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({"message": "Invalid email or otp"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ForgotPasswordAPIView(APIView):
