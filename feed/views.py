@@ -61,7 +61,7 @@ class FeedAPIVIEW(APIView):
         user = request.user.id
         following_list = list(FollowUser.objects.filter(followed_by=user).values_list('user_id', flat=True))
         if following_list:
-            all_posts = Post.objects.filter(author__id__in=following_list, is_active=True)
+            all_posts = Post.objects.filter(author__id__in=following_list, is_active=True).order_by('-created_at')
             serializer = PostCommentSerializer(all_posts, many=True, partial=True)
             return Response({"data": serializer.data}, status=status.HTTP_200_OK)
         else:
