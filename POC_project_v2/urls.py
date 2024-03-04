@@ -22,12 +22,11 @@ from blogs.views import PostListAPIVIEW
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', PostListAPIVIEW.as_view(), name='index'),
-
     path('api/', include('auths.urls')),
     path('api/', include('blogs.urls')),
     path('api/', include('blog_comments.urls')),
     path('api/', include('feed.urls', )),
-    path('api/', include('like.urls', ))
+
 
 
 ]
