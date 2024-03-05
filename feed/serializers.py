@@ -1,10 +1,9 @@
-from rest_framework import serializers, request
+from rest_framework import serializers
 from auths.models import CustomUser
 from blog_comments.models import Comment
 from blogs.models import Post
-from feed.models import FollowUser, Like
-from auths.serializers import UserSerializer
-from blog_comments.serializers import CommentSerializer
+from feed.models import FollowUser, Like, ReactComment
+from blog_comments.serializers import  CommentFeedSerializer
 
 
 class FollowSerializer(serializers.Serializer):
@@ -13,6 +12,15 @@ class FollowSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return FollowUser.objects.create(**validated_data)
+
+
+class ReactSerializer(serializers.Serializer):
+    comment = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all())
+    reacted_by = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    reaction = serializers.CharField()
+
+    def create(self, validated_data):
+        return ReactComment.objects.create(**validated_data)
 
 
 class LikeSerializer(serializers.Serializer):
@@ -26,15 +34,13 @@ class LikeSerializer(serializers.Serializer):
 class PostCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = "__all__"
+        fields = ["title", "body", "created_at", "updated_at"]
         extra_kwargs = {'is_active': {'write_only': True}}
 
     def to_representation(self, instance):
         response = super(PostCommentSerializer, self).to_representation(instance)
-        response['total_like'] = Like.objects.filter(post=instance).count()
-        response['author'] = UserSerializer(instance.author).data
-        response['comment'] = CommentSerializer(Comment.objects.filter(post=instance), many=True).data
+        author = (CustomUser.objects.filter(id=instance.author.id).values_list("username", flat=True))
+        response['blog author'] = author[0]
+        response['total likes'] = Like.objects.filter(post=instance).count()
+        response['comment'] = CommentFeedSerializer(Comment.objects.filter(post=instance), many=True).data
         return response
-
-
-

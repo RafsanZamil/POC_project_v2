@@ -2,21 +2,27 @@ from rest_framework import serializers
 
 from auths.models import CustomUser
 from blog_comments.models import Comment
-from blogs.models import Post
+from feed.models import ReactComment
 
 
-class CommentSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
-    comment_author = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
-    content = serializers.CharField()
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["id", "post", "comment_author", "content"]
 
-    def create(self, validated_data):
-        return Comment.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
+class CommentFeedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['content', ]
 
-        instance.content = validated_data.get('content', instance.content)
-        instance.post = validated_data.get('post', instance.post)
-        instance.save()
-        return instance
+    def to_representation(self, instance):
+        response = super(CommentFeedSerializer, self).to_representation(instance)
+        author = CustomUser.objects.filter(id=instance.comment_author.id).values_list("username", flat=True)
+        response['comment Author'] = author[0]
+        response['total reacts'] = ReactComment.objects.filter(comment=instance).count()
+        response['haha reacts'] = ReactComment.objects.filter(comment=instance, reaction="H").count()
+        response['sad reacts'] = ReactComment.objects.filter(comment=instance, reaction="S").count()
+        response['care reacts'] = ReactComment.objects.filter(comment=instance, reaction="C").count()
+        response['love reacts'] = ReactComment.objects.filter(comment=instance, reaction="L").count()
+        return response

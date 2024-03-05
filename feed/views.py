@@ -2,8 +2,9 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from auths.models import CustomUser
-from feed.models import FollowUser, Like
-from feed.serializers import FollowSerializer, PostCommentSerializer, LikeSerializer
+from blog_comments.models import Comment
+from feed.models import FollowUser, Like, ReactComment
+from feed.serializers import FollowSerializer, PostCommentSerializer, LikeSerializer, ReactSerializer
 from blogs.models import Post
 
 
@@ -122,3 +123,41 @@ class UnlikeAPIVIEW(APIView):
                 return Response({"message": "You didn't liked this post"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"message": f"{e}."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ReactAPIVIEW(APIView):
+    permissions_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        request_data = dict(request.data)
+        my_list = ["H", "C", "L", "S"]
+
+        comment_id = pk
+        request_data["comment"] = int(comment_id)
+        request_data["reacted_by"] = int(request.user.id)
+        post_id = Comment.objects.filter(id=comment_id)
+        if post_id:
+            post_id = post_id[0].post_id
+            post_author = Post.objects.filter(id=post_id)[0].author_id            # post_author = author[0].author_id
+            following_list = list(
+                FollowUser.objects.filter(followed_by=request.user.id).values_list("user_id", flat=True))
+
+            if post_author in following_list:
+                react_exists = ReactComment.objects.filter(comment=comment_id, reacted_by=request.user.id)
+                if react_exists:
+                    return Response({"message": "You already reacted this comment"},
+                                    status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    if str(request_data["reaction"]) in my_list:
+                        serializer = ReactSerializer(data=request_data)
+                        if serializer.is_valid():
+                            serializer.save()
+
+                            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                        return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"message": "Give Reaction field value between - H,C,S,L "},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({"message": "Follow the author to react on the comment "},
+                            status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "No post found"}, status=status.HTTP_404_NOT_FOUND)
