@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: POC_project_v2
+      POSTGRES_PASSWORD: 123
+    env_file:
+      - .env
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+
+    environment:
+#      - REDIS_PASSWORD=my-password
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
+
+
+
+  web:
+    build: .
+    command: bash -c "
+                     python manage.py migrate &&
+                     python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env

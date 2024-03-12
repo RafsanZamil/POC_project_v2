@@ -130,8 +130,6 @@ class ReactAPIVIEW(APIView):
 
     def post(self, request, pk):
         request_data = dict(request.data)
-        my_list = ["H", "C", "L", "S"]
-
         comment_id = pk
         request_data["comment"] = int(comment_id)
         request_data["reacted_by"] = int(request.user.id)
@@ -148,15 +146,12 @@ class ReactAPIVIEW(APIView):
                     return Response({"message": "You already reacted this comment"},
                                     status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    if str(request_data["reaction"]) in my_list:
-                        serializer = ReactSerializer(data=request_data)
-                        if serializer.is_valid():
-                            serializer.save()
+                    serializer = ReactSerializer(data=request_data)
+                    if serializer.is_valid():
+                        serializer.save()
 
-                            return Response(serializer.data, status=status.HTTP_201_CREATED)
-                        return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-                    return Response({"message": "Give Reaction field value between - H,C,S,L "},
-                                    status=status.HTTP_400_BAD_REQUEST)
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
             return Response({"message": "Follow the author to react on the comment "},
                             status=status.HTTP_400_BAD_REQUEST)

@@ -74,6 +74,8 @@ class SearchAPIVIEW(APIView):
         if filter_by:
             posts = Post.objects.filter(
                 Q(title__icontains=filter_by) | Q(body__icontains=filter_by)).filter(is_active=True)
+
+
         else:
             posts = Post.objects.filter(is_active=True)
 
@@ -102,7 +104,6 @@ class PostDetailAPIVIEW(APIView):
             print(self.request.user.id)
             print(post.author_id)
             if self.request.user.id == post.author_id:
-
                 request_data = dict(request.data)
                 request_data["author"] = request.user.id
                 post_serializer = PostSerializer(post, data=request.data, partial=True)

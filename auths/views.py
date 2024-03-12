@@ -12,7 +12,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer
 from rest_framework import status, permissions
 
-redis_client = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
+redis_client = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
 
 
 class MyObtainTokenPairView(TokenObtainPairView):

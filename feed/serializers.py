@@ -3,7 +3,7 @@ from auths.models import CustomUser
 from blog_comments.models import Comment
 from blogs.models import Post
 from feed.models import FollowUser, Like, ReactComment
-from blog_comments.serializers import  CommentFeedSerializer
+from blog_comments.serializers import CommentFeedSerializer
 
 
 class FollowSerializer(serializers.Serializer):
@@ -18,6 +18,12 @@ class ReactSerializer(serializers.Serializer):
     comment = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all())
     reacted_by = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
     reaction = serializers.CharField()
+
+    def validate(self, data):
+        my_list = ["H", "C", "L", "S"]
+        if data['reaction'] not in my_list:
+            raise serializers.ValidationError("react as - H,S,C,L")
+        return data
 
     def create(self, validated_data):
         return ReactComment.objects.create(**validated_data)
