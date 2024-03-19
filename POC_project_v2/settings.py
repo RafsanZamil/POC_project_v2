@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django_filters',
     'blog_comments',
     "django_extensions",
+    'transactions'
 
 
 ]
@@ -106,7 +107,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'POC_project_v2.wsgi.application'
 
 # Redis configuration
-REDIS_HOST = 'redis'
+REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 REDIS_DB = 0
 
