@@ -17,30 +17,31 @@ from django.contrib import admin
 #                 left += 1
 #             else:
 #                 right -= 1
-
 #
-class Solution:
-    def problem(self, nums: list[int]):
-
-        nums = sorted(list(set(nums)))
-
-        for i in range(0, len(nums) - 2):
-            left = 0
-            right = len(nums) - 1
-            target = 0
-            index = []
-            while left < right:
-                sums = nums[left] + nums[right] + nums[i]
-                if sums == target:
-                    index.append(left)
-                    index.append(right)
-                    index.append(i)
-                    return index
-                elif sums > target:
-                    right -= 1
-                else:
-                    left += 1
-
-a=Solution()
-result=a.problem(nums=[1,2])
-print(result)
+# #
+# class Solution:
+#     def problem(self, nums: list[int]):
+#
+#         nums = sorted(list(set(nums)))
+#
+#         for i in range(0, len(nums) - 2):
+#             left = 0
+#             right = len(nums) - 1
+#             target = 0
+#             index = []
+#             while left < right:
+#                 sums = nums[left] + nums[right] + nums[i]
+#                 if sums == target:
+#                     index.append(left)
+#                     index.append(right)
+#                     index.append(i)
+#                     return index
+#                 elif sums > target:
+#                     right -= 1
+#                 else:
+#                     left += 1
+#
+#
+# a = Solution()
+# result = a.problem(nums=[-1, 0, 1, 2, -1, -4])
+# print(result)

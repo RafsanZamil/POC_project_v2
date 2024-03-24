@@ -1,11 +1,17 @@
-DEBUG=True
+DEBUG=
 
-SECRET_KEY = django-insecure-vb!fyf!1fk_b*1tzd@=i%aj0xueaxi79sy8jkjkig-f7u
+SECRET_KEY =
 
 
-export DB_NAME = project_name
-export DB_USER = database
-export DB_USER_PASSWORD = 123
-export DB_HOST = localhost
-export DB_DB_PORT = 1234
+export DB_NAME =
+export DB_USER =
+export DB_USER_PASSWORD =
+export DB_HOST =
+export DB_DB_PORT =
+
+export EMAIL_USE_TLS =
+export EMAIL_HOST =
+export EMAIL_PORT =
+export EMAIL_HOST_USER =
+export EMAIL_HOST_PASSWORD =
 
