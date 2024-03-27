@@ -52,8 +52,8 @@ INSTALLED_APPS = [
     'django_filters',
     'blog_comments',
     "django_extensions",
-    'transactions'
-
+    'transactions',
+    "debug_toolbar",
 
 ]
 
@@ -70,7 +70,6 @@ REST_FRAMEWORK = {
 
 }
 
-
 AUTH_USER_MODEL = 'auths.CustomUser'
 POST_MODEL = 'blogs.Post'
 COMMENT_MODEL = 'blog_comments.Comment'
@@ -83,6 +82,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 CSRF_COOKIE_SECURE = False
 ROOT_URLCONF = 'POC_project_v2.urls'
@@ -106,11 +106,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'POC_project_v2.wsgi.application'
 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
+
 # Redis configuration
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 REDIS_DB = 0
-
 
 # Database
 
@@ -120,7 +125,6 @@ EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-
 
 DATABASES = {
     "default": {

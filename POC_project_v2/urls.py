@@ -21,6 +21,7 @@ from blogs.views import PostListAPIVIEW
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("__debug__/", include("debug_toolbar.urls")),
     path('', PostListAPIVIEW.as_view(), name='index'),
     path('api/', include('auths.urls')),
     path('api/', include('blogs.urls')),
