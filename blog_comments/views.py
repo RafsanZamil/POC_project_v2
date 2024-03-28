@@ -1,10 +1,10 @@
-
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from blog_comments.models import Comment
 from blog_comments.serializers import CommentSerializer
 from blogs.models import Post
+from blogs.views import redis_comment
 
 
 class CreateCommentAPIVIEW(APIView):
@@ -20,6 +20,9 @@ class CreateCommentAPIVIEW(APIView):
             serializer = CommentSerializer(data=request_data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                comment_data = redis_comment.get(pk)
+                if comment_data is not None:
+                    redis_comment.delete(pk)
                 return Response({'message': 'comment created ',
                                  'result': {'items': serializer.data, }}, status=status.HTTP_201_CREATED)
 
@@ -40,6 +43,10 @@ class CommentDetailAPIVIEW(APIView):
                 serializer = CommentSerializer(comment, data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
+                    post_pk = serializer.data.get('post')
+                    comment_data = redis_comment.get(post_pk)
+                    if comment_data is not None:
+                        redis_comment.delete(post_pk)
 
                     return Response({'message': 'successfully updated',
                                      'result': {'items': serializer.data, }}, status=status.HTTP_200_OK)
@@ -55,6 +62,11 @@ class CommentDetailAPIVIEW(APIView):
         comment = Comment.objects.filter(pk=pk)
         if comment:
             if self.request.user.id == comment[0].comment_author_id:
+                post_pk = Comment.objects.filter(pk=pk)[0]
+                post_pk = post_pk.post_id
+                comment_data = redis_comment.get(post_pk)
+                if comment_data is not None:
+                    redis_comment.delete(post_pk)
                 comment.delete()
 
                 return Response({'message': 'successfully deleted',

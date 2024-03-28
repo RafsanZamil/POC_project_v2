@@ -3,7 +3,6 @@ import redis
 from django.core.paginator import Paginator
 from django.db.models import Q
 from rest_framework.reverse import reverse
-
 from POC_project_v2 import settings
 from blog_comments.models import Comment
 from blog_comments.serializers import  CommentCacheSerializer
@@ -102,20 +101,25 @@ class PostDetailAPIVIEW(APIView):
         if post_data is None:
             try:
                 posts = Post.objects.get(pk=pk, is_active=True)
+
+                post_serializer = PostSerializer(posts)
+                dict_str_post = json.dumps(post_serializer.data)
+                redis_post.set(pk, dict_str_post, 2000)
+
                 comments = Comment.objects.filter(post=pk)
                 comment_serializer = CommentCacheSerializer(comments, many=True)
-                post_serializer = PostSerializer(posts)
-
-                dict_str_post = json.dumps(post_serializer.data)
                 dict_str_comment = json.dumps(comment_serializer.data)
-
                 redis_comment.set(pk, dict_str_comment, 2000)
-                redis_post.set(pk, dict_str_post, 2000)
                 return Response({'message': 'success', 'result': {'posts': post_serializer.data, 'comments': comment_serializer.data}}, status=status.HTTP_200_OK,
                                 )
             except Post.DoesNotExist:
                 return Response({'message': 'Post does not exist'}, status=status.HTTP_400_BAD_REQUEST)
-
+        if comment_data is None:
+            comments = Comment.objects.filter(post=pk)
+            comment_serializer = CommentCacheSerializer(comments, many=True)
+            dict_str_comment = json.dumps(comment_serializer.data)
+            redis_comment.set(pk, dict_str_comment, 2000)
+        comment_data = redis_comment.get(pk)
         comment_data = json.loads(comment_data)
         post_data = json.loads(post_data)
         return Response({'message': 'success', 'result': {'posts': post_data, 'comments': comment_data}},
@@ -133,7 +137,6 @@ class PostDetailAPIVIEW(APIView):
                     post_data = redis_post.get(pk)
                     if post_data is not None:
                         redis_post.delete(pk)
-                        redis_comment.delete(pk)
 
                     return Response({'message': 'successfully updated',
                                      'result': {'items': post_serializer.data, }}, status=status.HTTP_200_OK)
@@ -152,6 +155,10 @@ class PostDetailAPIVIEW(APIView):
             if self.request.user == post[0].author:
                 post[0].is_active = False
                 post[0].save()
+                post_data = redis_post.get(pk)
+                if post_data is not None:
+                    redis_post.delete(pk)
+                    redis_comment.delete(pk)
 
                 return Response({'message': 'Successfully Deleted',
                                  }, status=status.HTTP_204_NO_CONTENT
