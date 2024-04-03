@@ -5,7 +5,7 @@ from django.db.models import Q
 from rest_framework.reverse import reverse
 from POC_project_v2 import settings
 from blog_comments.models import Comment
-from blog_comments.serializers import  CommentCacheSerializer
+from blog_comments.serializers import CommentCacheSerializer
 from blogs.models import Post
 from blogs.serializers import PostSerializer
 from rest_framework.views import APIView
@@ -43,7 +43,7 @@ class PostListAPIVIEW(APIView):
         if int(page) >= 2 and not request.user.is_authenticated:
             return Response({'message': 'You need to login to see more posts'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        post_serializer = PostSerializer(result, many=True, context={'request': request})
+        post_serializer = PostSerializer(result, many=True)
 
         current_page_number = result.number
         if current_page_number != 1:
@@ -70,6 +70,7 @@ class PostListAPIVIEW(APIView):
                                  'result': {'items': post_serializer.data, 'previous': previous_page_url,
                                             'next': next_page_url}}, status=status.HTTP_200_OK)
             next_page_url = reverse('view_post') + f'?page={result.next_page_number()}'
+
             return Response({'message': 'success',
                              'result': {'items': post_serializer.data, 'previous': previous_page_url,
                                         'next': next_page_url}}, status=status.HTTP_200_OK)
@@ -86,7 +87,7 @@ class SearchAPIVIEW(APIView):
         else:
             posts = Post.objects.filter(is_active=True)
 
-        post_serializer = PostSerializer(posts, many=True, context={'request': request})
+        post_serializer = PostSerializer(posts, many=True)
 
         return Response({'message': 'success',
                          'result': {'items': post_serializer.data, }}, status=status.HTTP_200_OK)

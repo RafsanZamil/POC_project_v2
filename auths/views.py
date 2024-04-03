@@ -11,7 +11,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer
 from rest_framework import status, permissions
-
+from auths.tasks import send_notification_mail
 
 redis_client = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
 
@@ -22,33 +22,19 @@ class MyObtainTokenPairView(TokenObtainPairView):
 
 
 class RegisterAPIVIEW(APIView):
-
     def post(self, request):
         email = request.data.get("email")
         data = CustomUser.objects.filter(email=email, is_active=False)
         if data:
             data.delete()
-
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            with get_connection(
-
-                    host=settings.EMAIL_HOST,
-                    port=settings.EMAIL_PORT,
-                    username=settings.EMAIL_HOST_USER,
-                    password=settings.EMAIL_HOST_PASSWORD,
-                    use_tls=settings.EMAIL_USE_TLS
-            ) as connection:
-                subject = "Email Verification for Blog Application"
-                email_from = settings.EMAIL_HOST_USER
-                recipient_list = [request.data.get("email"), ]
-                otp = int(random.randint(1000, 9999))
-                message = "your one time otp key for account verification :  {}".format(otp)
-                email = request.data.get("email")
-                redis_client.set(email, otp, 36000)
-
-                EmailMessage(subject, message, email_from, recipient_list, connection=connection).send()
+            recipient_list = [request.data.get("email")]
+            otp = int(random.randint(1000, 9999))
+            email = request.data.get("email")
+            redis_client.set(email, otp, 36000)
+            send_notification_mail.delay(otp, recipient_list)
             return Response({'Message': "OTP sent successfully. Verify to register."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
