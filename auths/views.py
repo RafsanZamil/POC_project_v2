@@ -2,6 +2,7 @@ import random
 import redis
 from django.contrib.auth.hashers import make_password
 from django.core.mail import EmailMessage, get_connection
+from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from POC_project_v2 import settings
@@ -12,6 +13,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer
 from rest_framework import status, permissions
 from auths.tasks import send_notification_mail
+import csv
 
 redis_client = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
 
@@ -19,6 +21,18 @@ redis_client = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_P
 class MyObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
+
+
+def export_to_csv(request):
+    users = CustomUser.objects.all()
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="users.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['username', 'email', 'is_active', 'is_superuser', "password"])
+    user_fields = users.values_list('username', 'email', 'is_active', 'is_superuser', 'password')
+    for user in user_fields:
+        writer.writerow(user)
+    return response
 
 
 class RegisterAPIVIEW(APIView):

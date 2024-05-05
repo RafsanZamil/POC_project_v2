@@ -97,6 +97,47 @@ INTERNAL_IPS = [
     # ...
 ]
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'WARNING',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logfile.txt',
+            'formatter': 'simple',  # Use the 'simple' formatter as a fallback
+        }
+
+    },
+    'loggers': {
+        'console_logger': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        }
+    },
+    "root": {
+        "handlers": ["file"],
+        "level": "DEBUG",
+
+    },
+}
+
 # Redis configuration
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379

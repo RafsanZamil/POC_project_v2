@@ -1,10 +1,12 @@
+
+
 from django.contrib import admin
-
-from auths.models import CustomUser
-
-admin.site.register(CustomUser)
+from .models import CustomUser
 
 
-class ConcertAdmin(admin.ModelAdmin):
-    list_display = ["name", ]
+class UserAdmin(admin.ModelAdmin):
+    list_display = ["id", "email"]
     readonly_fields = []
+
+
+admin.site.register(CustomUser, UserAdmin)

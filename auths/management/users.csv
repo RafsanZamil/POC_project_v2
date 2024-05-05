@@ -1,0 +1,11 @@
+username,email,is_active,is_superuser,password
+admin,admin@admin.com,True,True,pbkdf2_sha256$720000$mFEjIDEExdMszg7K0R0wAJ$bdQ3tKOJ45GIIqHKO29/UZfpvQ2U3uZwSzsvc2u58QE=
+user33,user@gmail.com,False,False,pbkdf2_sha256$720000$LjWq5s5XLpDS1VA8Xkb7Ao$eAdB3/ee+zhXxlG5+wHXXNHM+09LwCHYoGth0SU6JLc=
+user332,user1@gmail.com,True,False,pbkdf2_sha256$720000$RlAU3xYLMDL0ZJxh4TEYfu$pfJJS/w0rycGkovsdiGk5EBX6DP4UfYsVkJg3E3HAWA=
+user3321,user3@gmail.com,False,False,pbkdf2_sha256$720000$s9IoLDzcjJjOnc2kxXrOzR$WxEALAayv7gG/buQnVzshUi1q6lOMbDI8sPIakXHidk=
+user,user00@gmail.com,True,False,pbkdf2_sha256$720000$6jXZoj5A22lpP0yg0dGVqa$NE12L57f6BgJ+51PFMCq3+7Qyrx5dlhiHDnQtgwoNh8=
+useewr,user0@gmail.com,False,False,pbkdf2_sha256$720000$O5LOqHpuLq3sYKcS1Rmha9$v8fAr6JNJQliGWYjyDvgAQl4rEvzRHpn2gd/JNc00/s=
+useeewr,rafsanzamilzisan@gmail.com,True,False,pbkdf2_sha256$720000$1H3WKpqXm3mqr4QjCRuviF$I5SVUB3AtynxcfrEkSfSj7U3VgjUFRJ4MGbTVQtbYpM=
+uuswresde,hell01234mailcom,False,False,pbkdf2_sha256$720000$HU7ZJ3voH0zlA4sjFlnF7X$WJgSJR/x3XndceesApcYna+2BjuTafi5qsW9b4fyHOI=
+uu3swrrrrr,rafsanzamil00000@gmail.com,True,False,pbkdf2_sha256$720000$nELyLxmlYyqB8KzkI9Kfo5$4+n43db1v01cU0zDRtecbJATyuyjZerILiNuMewXIB8=
+zamil,zamil@email.com,True,False,ggwp

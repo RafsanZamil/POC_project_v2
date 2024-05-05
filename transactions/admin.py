@@ -1,5 +1,23 @@
 from django.contrib import admin
 
+from django.contrib import admin
+from .models import Balance, Product
+
+
+class BalanceAdmin(admin.ModelAdmin):
+    list_display = ["user", "balance"]
+    readonly_fields = []
+
+
+admin.site.register(Balance, BalanceAdmin)
+
+
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ["owner", "product_name", "price"]
+    readonly_fields = []
+
+
+admin.site.register(Product, ProductAdmin)
 
 # Register your models here.
 # class Solution:

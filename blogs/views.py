@@ -2,6 +2,7 @@ import json
 import redis
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import HttpResponse
 from rest_framework.reverse import reverse
 from POC_project_v2 import settings
 from blog_comments.models import Comment
@@ -11,26 +12,84 @@ from blogs.serializers import PostSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-
+import csv
+import logging
 redis_post = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=1)
 redis_comment = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=2)
+
+
+logger = logging.getLogger(__name__)
+logger_console = logging.getLogger('console_logger')
+
+
+def export_to_csv(request):
+    posts = Post.objects.all()
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="posts.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['title', 'body', 'author', 'created_at', 'updated_at', 'is_active'])
+    post_fields = posts.values_list('title', 'body', 'author', 'created_at', 'updated_at', 'is_active')
+    for post in post_fields:
+        writer.writerow(post)
+    return response
+
+
+class CSVUploadAPIView(APIView):
+    def post(self, request):
+        csv_file = request.FILES.get('file')
+        if not csv_file:
+            return Response({'error': 'No file uploaded'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not csv_file.name.endswith('.csv'):
+            return Response({'error': 'Uploaded file is not a CSV'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            decoded_file = csv_file.read().decode('utf-8').splitlines()
+            reader = csv.DictReader(decoded_file)
+            created = 0
+            skipped = 0
+            next(reader)
+            for row in reader:
+                existing_post = Post.objects.filter(title=row['title']).first()
+                if existing_post:
+                    skipped += 1
+                    continue
+                serializer = PostSerializer(data=row)
+                if serializer.is_valid():
+                    serializer.save()
+                    created += 1
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                'message': 'CSV data uploaded successfully',
+                'created': created,
+                'skipped': skipped
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class PostCreateAPIVIEW(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        request_data = dict(request.data)
-        request_data["author"] = request.user.id
+        try:
+            request_data = dict(request.data)
+            request_data["author"] = request.user.id
 
-        post_serializer = PostSerializer(data=request_data)
-        if post_serializer.is_valid():
-            post_serializer.save()
+            post_serializer = PostSerializer(data=request_data)
+            if post_serializer.is_valid():
+                post_serializer.save()
+                logger.info('Blog post created by user %s', request.user.username)
+                return Response({'message': 'Blog post created ',
+                                 'result': {'items': post_serializer.data, }}, status=status.HTTP_201_CREATED)
 
-            return Response({'message': 'Blog post created ',
-                             'result': {'items': post_serializer.data, }}, status=status.HTTP_201_CREATED)
+            logger.error('Failed to create blog post: %s', post_serializer.errors)
+            return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.exception('An unexpected error occurred: %s', str(e))
+            return Response({'message': 'An unexpected error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class PostListAPIVIEW(APIView):
@@ -40,6 +99,7 @@ class PostListAPIVIEW(APIView):
         paginator = Paginator(posts, 5)
         page = request.GET.get('page', 1)
         result = paginator.get_page(page)
+        print(result)
         if int(page) >= 2 and not request.user.is_authenticated:
             return Response({'message': 'You need to login to see more posts'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -111,18 +171,24 @@ class PostDetailAPIVIEW(APIView):
                 comment_serializer = CommentCacheSerializer(comments, many=True)
                 dict_str_comment = json.dumps(comment_serializer.data)
                 redis_comment.set(pk, dict_str_comment, 2000)
-                return Response({'message': 'success', 'result': {'posts': post_serializer.data, 'comments': comment_serializer.data}}, status=status.HTTP_200_OK,
+                return Response({'message': 'success',
+                                 'result': {'posts': post_serializer.data, 'comments': comment_serializer.data}},
+                                status=status.HTTP_200_OK,
                                 )
             except Post.DoesNotExist:
+                logger_console.warning('Post with pk=%s does not exist', pk)
                 return Response({'message': 'Post does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         if comment_data is None:
             comments = Comment.objects.filter(post=pk)
             comment_serializer = CommentCacheSerializer(comments, many=True)
             dict_str_comment = json.dumps(comment_serializer.data)
             redis_comment.set(pk, dict_str_comment, 2000)
+            logger_console.warning('No comment data found for post with pk=%s', pk)
+
         comment_data = redis_comment.get(pk)
         comment_data = json.loads(comment_data)
         post_data = json.loads(post_data)
+        logger_console.warning('Post data for post with pk=%s', pk)
         return Response({'message': 'success', 'result': {'posts': post_data, 'comments': comment_data}},
                         status=status.HTTP_200_OK)
 
