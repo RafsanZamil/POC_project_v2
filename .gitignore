@@ -99,6 +99,9 @@ celerybeat-schedule.*
 
 # Environments
 .env
+logfile.txt
+testfile.py
+locustfile.py
 .venv
 env/
 venv/

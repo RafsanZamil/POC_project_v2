@@ -1,90 +1,65 @@
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/urls.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+WARNING Not Found: /api/check/
+WARNING Not Found: /api/check/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-WARNING Not Found: /api/api/blog/
-WARNING Unauthorized: /api/blog/
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+WARNING Not Found: /api/send/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-WARNING Unauthorized: /api/blog/
-WARNING Unauthorized: /api/blog/
-WARNING Unauthorized: /api/blog/
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+WARNING Bad Request: /api/send/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+WARNING Not Found: /api/send/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+WARNING Bad Request: /api/send/
+WARNING Not Found: /api/send/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+WARNING Not Found: /api/send/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+WARNING Not Found: /api/send/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-WARNING Unauthorized: /api/blog/
-WARNING Bad Request: /api/blog/1/comment/
-ERROR Internal Server Error: /api/create/comment/21/
-Traceback (most recent call last):
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 264, in connect
-    sock = self.retry.call_with_retry(
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/retry.py", line 46, in call_with_retry
-    return do()
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 265, in <lambda>
-    lambda: self._connect(), lambda error: self.disconnect(error)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 627, in _connect
-    raise err
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 615, in _connect
-    sock.connect(socket_address)
-ConnectionRefusedError: [Errno 111] Connection refused
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
-    response = get_response(request)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
-    return view_func(request, *args, **kwargs)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
-    return self.dispatch(request, *args, **kwargs)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
-    response = self.handle_exception(exc)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
-    self.raise_uncaught_exception(exc)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
-    raise exc
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
-    response = handler(request, *args, **kwargs)
-  File "/home/upay/PycharmProjects/POC_project_v2/blog_comments/views.py", line 23, in post
-    comment_data = redis_comment.get(pk)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/commands/core.py", line 1829, in get
-    return self.execute_command("GET", name)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/client.py", line 533, in execute_command
-    conn = self.connection or pool.get_connection(command_name, **options)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 1086, in get_connection
-    connection.connect()
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 270, in connect
-    raise ConnectionError(self._error_message(e))
-redis.exceptions.ConnectionError: Error 111 connecting to localhost:6379. Connection refused.
+WARNING Not Found: /api/send/
+WARNING Not Found: /api/send/
+WARNING Not Found: /api/send/
+WARNING Bad Request: /api/send/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+WARNING Not Found: /api/send/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-WARNING Not Found: /api/api/blog/
-WARNING Unauthorized: /api/blog/
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-ERROR Internal Server Error: /api/blog/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+WARNING Unauthorized: /api/create/product/
+WARNING Bad Request: /api/create/product/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+WARNING Not Found: /api/buy/product/
+ERROR Internal Server Error: /api/buy/
 Traceback (most recent call last):
   File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
     response = get_response(request)
@@ -102,32 +77,10 @@ Traceback (most recent call last):
     raise exc
   File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
     response = handler(request, *args, **kwargs)
-  File "/home/upay/PycharmProjects/POC_project_v2/blogs/views.py", line 169, in get
-    result, page = self._paginate_queryset(posts, request)
-TypeError: PaginationAPIVIEW._paginate_queryset() missing 1 required positional argument: 'request'
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
-INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
-INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
-INFO Watching for file changes with StatReloader
-INFO Watching for file changes with StatReloader
-ERROR Internal Server Error: /api/blog/22/
-Traceback (most recent call last):
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 264, in connect
-    sock = self.retry.call_with_retry(
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/retry.py", line 46, in call_with_retry
-    return do()
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 265, in <lambda>
-    lambda: self._connect(), lambda error: self.disconnect(error)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 627, in _connect
-    raise err
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 615, in _connect
-    sock.connect(socket_address)
-ConnectionRefusedError: [Errno 111] Connection refused
-
-During handling of the above exception, another exception occurred:
-
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 81, in post
+    if stock >= items and stock >= 0:
+TypeError: '>=' not supported between instances of 'int' and 'NoneType'
+ERROR Internal Server Error: /api/buy/
 Traceback (most recent call last):
   File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
     response = get_response(request)
@@ -145,33 +98,18 @@ Traceback (most recent call last):
     raise exc
   File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
     response = handler(request, *args, **kwargs)
-  File "/home/upay/PycharmProjects/POC_project_v2/blogs/views.py", line 268, in put
-    post_data = redis_post.get(pk)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/commands/core.py", line 1829, in get
-    return self.execute_command("GET", name)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/client.py", line 533, in execute_command
-    conn = self.connection or pool.get_connection(command_name, **options)
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 1086, in get_connection
-    connection.connect()
-  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/redis/connection.py", line 270, in connect
-    raise ConnectionError(self._error_message(e))
-redis.exceptions.ConnectionError: Error 111 connecting to localhost:6379. Connection refused.
-INFO /home/upay/PycharmProjects/POC_project_v2/POC_project_v2/settings.py changed, reloading.
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 81, in post
+    if stock >= items and stock >= 0:
+TypeError: '>=' not supported between instances of 'int' and 'NoneType'
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/serializers.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/serializers.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-WARNING Bad Request: /api/blog/22/
-WARNING Bad Request: /api/blog/22/
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-WARNING Bad Request: /api/blog/2299/
-WARNING Bad Request: /api/blog/2299/
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
-INFO Watching for file changes with StatReloader
-WARNING Bad Request: /api/blog/2299/
-ERROR Internal Server Error: /api/blog/22/
+ERROR Internal Server Error: /api/buy/
 Traceback (most recent call last):
   File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
     response = get_response(request)
@@ -189,14 +127,12 @@ Traceback (most recent call last):
     raise exc
   File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
     response = handler(request, *args, **kwargs)
-  File "/home/upay/PycharmProjects/POC_project_v2/blogs/views.py", line 250, in get
-    post_data = self._get_post_data(pk)
-TypeError: PostAPIVIEW._get_post_data() missing 1 required positional argument: 'pk'
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 84, in post
+    if stock >= items and stock >= 0:
+TypeError: '>=' not supported between instances of 'int' and 'NoneType'
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
-INFO Watching for file changes with StatReloader
-ERROR Internal Server Error: /api/blog/22/
+ERROR Internal Server Error: /api/buy/
 Traceback (most recent call last):
   File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
     response = get_response(request)
@@ -214,12 +150,12 @@ Traceback (most recent call last):
     raise exc
   File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
     response = handler(request, *args, **kwargs)
-  File "/home/upay/PycharmProjects/POC_project_v2/blogs/views.py", line 250, in get
-    post_data = self._get_post_data(pk)
-TypeError: PostAPIVIEW._get_post_data() missing 1 required positional argument: 'pk'
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 77, in post
+    owner = product_queryset[0]['owner_id']
+TypeError: tuple indices must be integers or slices, not str
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
-ERROR Internal Server Error: /api/blog/22/
+ERROR Internal Server Error: /api/buy/
 Traceback (most recent call last):
   File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
     response = get_response(request)
@@ -237,8 +173,247 @@ Traceback (most recent call last):
     raise exc
   File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
     response = handler(request, *args, **kwargs)
-  File "/home/upay/PycharmProjects/POC_project_v2/blogs/views.py", line 255, in get
-    comment_data = self._get_comment_data(pk)
-TypeError: CommentAPIVIEW._get_comment_data() missing 1 required positional argument: 'pk'
-INFO /home/upay/PycharmProjects/POC_project_v2/blogs/views.py changed, reloading.
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 79, in post
+    stock = product_queryset[0]['stock']
+TypeError: tuple indices must be integers or slices, not str
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
 INFO Watching for file changes with StatReloader
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+ERROR Internal Server Error: /api/buy/
+Traceback (most recent call last):
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 80, in post
+    stock = product_queryset[0]['stock']
+TypeError: tuple indices must be integers or slices, not str
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+ERROR Internal Server Error: /api/buy/
+Traceback (most recent call last):
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 80, in post
+    if stock >= quantity and stock >= 0:
+TypeError: '>=' not supported between instances of 'int' and 'NoneType'
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+WARNING Bad Request: /api/buy/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+ERROR Internal Server Error: /api/buy/
+Traceback (most recent call last):
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 81, in post
+    if stock >= quantity and stock >= 0:
+TypeError: '>=' not supported between instances of 'int' and 'NoneType'
+INFO Watching for file changes with StatReloader
+INFO Watching for file changes with StatReloader
+ERROR Internal Server Error: /api/buy/
+Traceback (most recent call last):
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 81, in post
+    if stock >= quantity and stock >= 0:
+TypeError: '>=' not supported between instances of 'int' and 'NoneType'
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/serializers.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/serializers.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO Watching for file changes with StatReloader
+ERROR Internal Server Error: /api/buy/
+Traceback (most recent call last):
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 80, in post
+    if stock >= quantity and stock >= 0:
+TypeError: '>=' not supported between instances of 'int' and 'NoneType'
+WARNING Bad Request: /api/buy/
+ERROR Internal Server Error: /api/buy/
+Traceback (most recent call last):
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 80, in post
+    if stock >= quantity and stock >= 0:
+TypeError: '>=' not supported between instances of 'int' and 'NoneType'
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/serializers.py changed, reloading.
+INFO Watching for file changes with StatReloader
+WARNING Bad Request: /api/buy/
+WARNING Bad Request: /api/buy/
+WARNING Bad Request: /api/buy/
+DEBUG Starting new HTTP connection (1): localhost:8000
+DEBUG http://localhost:8000 "GET /api/check/ HTTP/1.1" 200 17
+ERROR Internal Server Error: /api/buy/
+Traceback (most recent call last):
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 87, in post
+    owner_balance = Balance.objects.get(user_id=owner)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/db/models/query.py", line 649, in get
+    raise self.model.DoesNotExist(
+transactions.models.Balance.DoesNotExist: Balance matching query does not exist.
+DEBUG Starting new HTTP connection (1): localhost:8000
+DEBUG http://localhost:8000 "GET /api/check/ HTTP/1.1" 200 17
+ERROR Internal Server Error: /api/buy/
+Traceback (most recent call last):
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/transactions/views.py", line 87, in post
+    owner_balance = Balance.objects.get(user_id=owner)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/upay/PycharmProjects/POC_project_v2/.venv/lib/python3.10/site-packages/django/db/models/query.py", line 649, in get
+    raise self.model.DoesNotExist(
+transactions.models.Balance.DoesNotExist: Balance matching query does not exist.
+DEBUG Starting new HTTP connection (1): localhost:8000
+DEBUG http://localhost:8000 "GET /api/check/ HTTP/1.1" 200 17
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+DEBUG Starting new HTTP connection (1): localhost:8000
+DEBUG http://localhost:8000 "GET /api/check/ HTTP/1.1" 200 17
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/serializers.py changed, reloading.
+INFO Watching for file changes with StatReloader
+DEBUG Using selector: EpollSelector
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/serializers.py changed, reloading.
+INFO Watching for file changes with StatReloader
+WARNING Unauthorized: /api/check/
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+DEBUG Starting new HTTP connection (1): localhost:8000
+DEBUG http://localhost:8000 "GET /api/check/ HTTP/1.1" 200 17
+INFO Watching for file changes with StatReloader
+DEBUG Starting new HTTP connection (1): localhost:8000
+DEBUG http://localhost:8000 "GET /api/check/ HTTP/1.1" 200 17
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO Watching for file changes with StatReloader
+DEBUG Starting new HTTP connection (1): localhost:8000
+DEBUG http://localhost:8000 "GET /api/check/ HTTP/1.1" 200 17
+INFO /home/upay/PycharmProjects/POC_project_v2/transactions/views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO Watching for file changes with StatReloader
+WARNING Bad Request: /api/buy/
+WARNING Bad Request: /api/buy/
+WARNING Bad Request: /api/buy/
+WARNING Bad Request: /api/buy/
+WARNING Bad Request: /api/buy/
+DEBUG Starting new HTTP connection (1): localhost:8000
+DEBUG http://localhost:8000 "GET /api/check/ HTTP/1.1" 200 17
+WARNING Not Found: /api/send/
