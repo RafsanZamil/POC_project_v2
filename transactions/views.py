@@ -8,6 +8,7 @@ from transactions.models import Balance, Product
 from transactions.serializers import ProductSerializer, SendMoneySerializer, BuyProductSerializer, \
     CheckBalanceSerializer
 import logging
+
 logger = logging.getLogger('console_logger')
 
 
@@ -43,15 +44,15 @@ class SendMoneyAPIVIEW(APIView):
                         with transaction.atomic():
                             Balance.objects.filter(user_id=request.user.id).update(balance=sender_balance - amount)
                             Balance.objects.filter(user_id=receiver_id).update(balance=receiver_old_balance + amount)
-                            logger.debug({"Info":f"{request.user} send money to {receiver_id}"})
+                            logger.debug({"Info": f"{request.user} send money to {receiver_id}"})
                             return Response({"Message": "Send Money Successful"}, status=status.HTTP_200_OK)
                     else:
                         return Response({"message": "Insufficient Balance"}, status=status.HTTP_400_BAD_REQUEST)
                 return Response({"message": "User doesnt exists"}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 logger.error({
-                        'message': e,
-                    })
+                    'message': e,
+                })
                 return Response({"message": f"{e}."}, status=status.HTTP_404_NOT_FOUND)
 
         else:
@@ -67,7 +68,7 @@ class CreateProductAPIVIEW(APIView):
         if product_serializer.is_valid():
             product_serializer.save()
             logger.debug(
-                 f"{request.user} created a product",
+                f"{request.user} created a product",
 
             )
 
