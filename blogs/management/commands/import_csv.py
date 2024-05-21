@@ -7,6 +7,8 @@ from django.core.management.base import BaseCommand
 from auths.models import CustomUser
 from blogs.models import Post
 import csv
+
+
 class Command(BaseCommand):
     help = 'Imports data from a CSV file into the database'
 

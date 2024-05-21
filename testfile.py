@@ -115,13 +115,20 @@
 #
 #
 #
+# data = [
+#     {1:'Alice'},
+#     {2:'Bob' },
+#     {3:'Charlie'}
+# ]
+# for row in data:
+#     for key, value in row.items():
+#         print(f"{key}: {value}", end=' ')
+#     print()
+
+
+# my_list = ["flower", "flowing", "fsfads"]
 #
 #
+# def check_list(my_list):
 #
-#
-#
-#
-#
-#
-#
-#
+
