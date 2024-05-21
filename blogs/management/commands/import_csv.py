@@ -10,7 +10,7 @@ import csv
 
 
 class Command(BaseCommand):
-    help = 'Imports data from a CSV file into the database'
+    help = 'Imports data from CSV into database'
 
     def handle(self, *args, **kwargs):
         file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'posts.csv')

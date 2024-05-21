@@ -125,17 +125,24 @@ LOGGING = {
 
     },
     'loggers': {
-        'console_logger': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'general': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
         }
     },
-    "root": {
-        "handlers": ["file"],
-        "level": "DEBUG",
 
-    },
+
 }
 
 # Redis configuration

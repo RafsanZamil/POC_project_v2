@@ -23,7 +23,8 @@ class CheckBalanceSerializer(serializers.Serializer):
     balance = serializers.IntegerField()
 
 
-class SendMoneySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Balance
-        fields = '__all__'
+class SendMoneySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+
+

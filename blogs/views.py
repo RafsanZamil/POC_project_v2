@@ -13,7 +13,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 import csv
-import pandas
 import logging
 
 redis_post = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=1)
@@ -70,46 +69,6 @@ class CSVUploadAPIView(APIView):
             }, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# Using pandas ###############################
-
-# class CSVUploadAPIView(APIView):
-#     def post(self, request):
-#         csv_file = request.FILES.get('file')
-#
-#         if not csv_file:
-#             return Response({'error': 'No file uploaded'}, status=status.HTTP_400_BAD_REQUEST)
-#
-#         if not csv_file.name.endswith('.csv'):
-#             return Response({'error': 'Uploaded file is not a CSV'}, status=status.HTTP_400_BAD_REQUEST)
-#
-#         try:
-#             reader = pandas.read_csv(csv_file)
-#             created = 0
-#             skipped = 0
-#             for index, row in reader.iterrows():
-#
-#                 existing_post = Post.objects.filter(title=row['title']).first()
-#                 if existing_post:
-#                     print(f"{row['title']} already exists")
-#                     skipped += 1
-#                     continue
-#                 Data = {"title": row['title'], "body": row['body'], "author": row['author'],
-#                         'created_at': row['created_at'], 'updated_at': row['updated_at'], 'is_active': row['is_active']}
-#                 serializer = PostSerializer(data=Data)
-#                 if serializer.is_valid():
-#                     serializer.save()
-#                     created += 1
-#                 else:
-#                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#             return Response({
-#                 'message': 'CSV data uploaded successfully',
-#                 'created': created,
-#                 'skipped': skipped
-#             }, status=status.HTTP_201_CREATED)
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class PostCreateAPIVIEW(APIView):

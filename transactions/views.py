@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from transactions.models import Balance, Product
 from transactions.serializers import ProductSerializer, SendMoneySerializer, BuyProductSerializer, \
     CheckBalanceSerializer
+import logging
+logger = logging.getLogger('console_logger')
 
 
 class CheckBalanceAPIVIEW(APIView):
@@ -17,6 +19,9 @@ class CheckBalanceAPIVIEW(APIView):
             balances = Balance.objects.get(user_id=request.user.id)
             return Response({'balance': balances.balance})
         except Exception as e:
+            logger.error({
+                'message': e,
+            })
             return Response({"message": "User does not exists"}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -26,23 +31,27 @@ class SendMoneyAPIVIEW(APIView):
     def post(self, request):
         request.data["user"] = request.user.id
         sendMoneySerializer = SendMoneySerializer(data=request.data)
-        if sendMoneySerializer.is_valid:
+        if sendMoneySerializer.is_valid():
             try:
                 receiver_id = request.data.get("id")
                 amount = request.data.get("amount")
                 receiver_balance_queryset = Balance.objects.filter(user_id=receiver_id).values("balance")
-                receiver_old_balance = receiver_balance_queryset[0]['balance']
-                sender_balance_queryset = Balance.objects.filter(user_id=request.user.id).values("balance")
-                sender_old_balance = sender_balance_queryset[0]['balance']
-                if sender_old_balance >= amount:
-                    with transaction.atomic():
-                        Balance.objects.filter(user_id=request.user.id).update(balance=sender_old_balance - amount)
-                        Balance.objects.filter(user_id=receiver_id).update(balance=receiver_old_balance + amount)
-
-                        return Response({"Message": "Send Money Successful"}, status=status.HTTP_200_OK)
-                else:
-                    return Response({"message": "Insufficient Balance"}, status=status.HTTP_400_BAD_REQUEST)
+                if receiver_balance_queryset.exists():
+                    receiver_old_balance = receiver_balance_queryset[0]['balance']
+                    sender_balance = Balance.objects.filter(user_id=request.user.id).values("balance")[0]["balance"]
+                    if sender_balance >= amount:
+                        with transaction.atomic():
+                            Balance.objects.filter(user_id=request.user.id).update(balance=sender_balance - amount)
+                            Balance.objects.filter(user_id=receiver_id).update(balance=receiver_old_balance + amount)
+                            logger.debug({"Info":f"{request.user} send money to {receiver_id}"})
+                            return Response({"Message": "Send Money Successful"}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({"message": "Insufficient Balance"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"message": "User doesnt exists"}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
+                logger.error({
+                        'message': e,
+                    })
                 return Response({"message": f"{e}."}, status=status.HTTP_404_NOT_FOUND)
 
         else:
@@ -57,6 +66,10 @@ class CreateProductAPIVIEW(APIView):
         product_serializer = ProductSerializer(data=request.data)
         if product_serializer.is_valid():
             product_serializer.save()
+            logger.debug(
+                 f"{request.user} created a product",
+
+            )
 
             return Response({'message': 'Product created ',
                              'result': {'items': product_serializer.data, }}, status=status.HTTP_201_CREATED)
@@ -71,14 +84,12 @@ class BuyProductAPIVIEW(APIView):
         serializer = BuyProductSerializer(data=request.data)
         if serializer.is_valid():
             product_id = request.data.get("id")
-            product_exist = Product.objects.filter(id=product_id)
+            product_exist = Product.objects.filter(id=product_id).values_list("owner_id", "stock", "price")
             if product_exist:
-                product_queryset = Product.objects.filter(id=product_id).values_list("owner_id", "stock", "price")
-                owner, stock, price = product_queryset[0]
+                owner, stock, price = product_exist[0]
                 quantity = request.data.get("quantity")
 
                 if stock >= quantity and stock >= 0:
-                    price = quantity * price
                     headers = {
                         'Authorization': request.headers.get('Authorization')
                     }
@@ -88,7 +99,7 @@ class BuyProductAPIVIEW(APIView):
                     if serializer.is_valid():
                         balance = serializer.data.get("balance")
                         owner_balance = Balance.objects.get(user_id=owner)
-
+                        price = quantity * price
                         if price > balance:
                             return Response({'message': "Do not have sufficient balance"},
                                             status=status.HTTP_400_BAD_REQUEST)
@@ -96,7 +107,12 @@ class BuyProductAPIVIEW(APIView):
                             Balance.objects.filter(user_id=request.user.id).update(balance=balance - price)
                             Balance.objects.filter(user_id=owner).update(balance=owner_balance.balance + price)
                             Product.objects.filter(id=product_id).update(stock=stock - quantity)
+                            logger.debug({
+                                'info': f"{request.user} bought the product {product_id}",
+
+                            })
                             return Response({'message': "you bought the product"}, status=status.HTTP_200_OK)
+
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 return Response({'message': 'stock not available'}, status=status.HTTP_400_BAD_REQUEST)
 
