@@ -71,7 +71,6 @@ class CreateProductAPIVIEW(APIView):
                 f"{request.user} created a product",
 
             )
-
             return Response({'message': 'Product created ',
                              'result': {'items': product_serializer.data, }}, status=status.HTTP_201_CREATED)
 
@@ -96,9 +95,9 @@ class BuyProductAPIVIEW(APIView):
                     }
                     check_balance_queryset = requests.get(" http://localhost:8000/api/check/", headers=headers)
                     balance_data = check_balance_queryset.json()
-                    serializer = CheckBalanceSerializer(data=balance_data)
-                    if serializer.is_valid():
-                        balance = serializer.data.get("balance")
+                    BalanceSerializer = CheckBalanceSerializer(data=balance_data)
+                    if BalanceSerializer.is_valid():
+                        balance = BalanceSerializer.data.get("balance")
                         owner_balance = Balance.objects.get(user_id=owner)
                         price = quantity * price
                         if price > balance:
@@ -112,11 +111,12 @@ class BuyProductAPIVIEW(APIView):
                                 'info': f"{request.user} bought the product {product_id}",
 
                             })
-                            return Response({'message': "you bought the product"}, status=status.HTTP_200_OK)
+                            return Response({'message': "product buying successful"}, status=status.HTTP_200_OK)
 
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 return Response({'message': 'stock not available'}, status=status.HTTP_400_BAD_REQUEST)
 
             return Response({'message': 'No product found'}, status=status.HTTP_201_CREATED)
 
+        logger.debug(f" Serializer error : {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
