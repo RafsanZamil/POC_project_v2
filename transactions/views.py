@@ -31,14 +31,14 @@ class SendMoneyAPIVIEW(APIView):
 
     def post(self, request):
         request.data["user"] = request.user.id
-        sendMoneySerializer = SendMoneySerializer(data=request.data)
-        if sendMoneySerializer.is_valid():
+        serializer = SendMoneySerializer(data=request.data)
+        if serializer.is_valid():
             try:
                 receiver_id = request.data.get("id")
                 amount = request.data.get("amount")
-                receiver_balance_queryset = Balance.objects.filter(user_id=receiver_id).values("balance")
-                if receiver_balance_queryset.exists():
-                    receiver_old_balance = receiver_balance_queryset[0]['balance']
+                receiver_balance_queryset = Balance.objects.filter(user_id=receiver_id).values("balance").first()
+                if 'balance' in receiver_balance_queryset:
+                    receiver_old_balance = receiver_balance_queryset['balance']
                     sender_balance = Balance.objects.filter(user_id=request.user.id).values("balance")[0]["balance"]
                     if sender_balance >= amount:
                         with transaction.atomic():

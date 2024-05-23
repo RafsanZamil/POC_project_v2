@@ -5,7 +5,7 @@ from .models import CustomUser
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ["id", "email"]
+    list_display = ["id","username", "email"]
     readonly_fields = []
 
 
