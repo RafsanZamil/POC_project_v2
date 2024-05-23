@@ -12,18 +12,17 @@ class FollowAPIVIEW(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        request_data = dict()
-        request_data["followed_by"] = request.user.id
+        request.data["followed_by"] = request.user.id
         user_id = pk
-        request_data["user_id"] = user_id
+        request.data["user_id"] = user_id
         try:
             user_exists = CustomUser.objects.get(pk=user_id)
-            follower_id = request_data.get("followed_by")
+            follower_id = request.data.get("followed_by")
             followed_by = FollowUser.objects.filter(user_id=user_exists.id, followed_by=follower_id)
             if followed_by:
                 return Response({"message": "You already followed the user"}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                serializer = FollowSerializer(data=request_data)
+                serializer = FollowSerializer(data=request.data)
                 if serializer.is_valid():
                     serializer.save()
                     return Response({'message': 'You followed someone ',
@@ -38,13 +37,12 @@ class UnfollowAPIVIEW(APIView):
     permissions_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        request_data = dict()
-        request_data["followed_by"] = request.user.id
+        request.data["followed_by"] = request.user.id
         user_id = pk
-        request_data["user_id"] = user_id
+        request.data["user_id"] = user_id
         try:
             user_exists = CustomUser.objects.get(pk=user_id)
-            follower_id = request_data.get("followed_by")
+            follower_id = request.data.get("followed_by")
             followed_by = FollowUser.objects.filter(user_id=user_exists.id, followed_by=follower_id)
             if followed_by:
                 followed_by.delete()
@@ -73,10 +71,9 @@ class LikeAPIVIEW(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        request_data = dict()
-        request_data["liked_by"] = request.user.id
+        request.data["liked_by"] = request.user.id
         post_id = pk
-        request_data["post"] = post_id
+        request.data["post"] = post_id
         author = Post.objects.filter(pk=post_id).values("author_id")
         if author:
             author_id = author[0].get("author_id")
@@ -85,12 +82,12 @@ class LikeAPIVIEW(APIView):
 
             if author_id in following_list:
                 post_exists = Post.objects.get(pk=post_id)
-                liked_by = request_data.get("liked_by")
+                liked_by = request.data.get("liked_by")
                 liked = Like.objects.filter(post_id=post_exists.id, liked_by=liked_by)
                 if liked:
                     return Response({"message": "You already liked the post"}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    serializer = LikeSerializer(data=request_data)
+                    serializer = LikeSerializer(data=request.data)
                     if serializer.is_valid():
                         serializer.save()
                         return Response({'message': 'You liked the post ',
@@ -108,13 +105,12 @@ class UnlikeAPIVIEW(APIView):
     permissions_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        request_data = dict()
-        request_data["liked_by"] = int(request.user.id)
+        request.data["liked_by"] = int(request.user.id)
         post_id = pk
-        request_data["post"] = int(post_id)
+        request.data["post"] = int(post_id)
         try:
             post_exists = Post.objects.get(pk=post_id)
-            liked_by = request_data.get("liked_by")
+            liked_by = request.data.get("liked_by")
             liked = Like.objects.filter(post_id=post_exists.id, liked_by=liked_by)
             if liked:
                 liked.delete()
@@ -129,10 +125,9 @@ class ReactAPIVIEW(APIView):
     permissions_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        request_data = dict(request.data)
         comment_id = pk
-        request_data["comment"] = int(comment_id)
-        request_data["reacted_by"] = int(request.user.id)
+        request.data["comment"] = int(comment_id)
+        request.data["reacted_by"] = int(request.user.id)
         post_id = Comment.objects.filter(id=comment_id)
         if post_id:
             post_id = post_id[0].post_id
@@ -146,7 +141,7 @@ class ReactAPIVIEW(APIView):
                     return Response({"message": "You already reacted this comment"},
                                     status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    serializer = ReactSerializer(data=request_data)
+                    serializer = ReactSerializer(data=request.data)
                     if serializer.is_valid():
                         serializer.save()
 

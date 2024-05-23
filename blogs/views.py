@@ -76,10 +76,9 @@ class PostCreateAPIVIEW(APIView):
 
     def post(self, request):
         try:
-            request_data = dict(request.data)
-            request_data["author"] = request.user.id
+            request.data["author"] = request.user.id
 
-            post_serializer = PostSerializer(data=request_data)
+            post_serializer = PostSerializer(data=request.data)
             if post_serializer.is_valid():
                 post_serializer.save()
                 logger_console.debug('Blog post created by user %s', request.user.username)
@@ -219,8 +218,8 @@ class PostDetailAPIVIEW(PostAPIVIEW, CommentAPIVIEW):
         try:
             post = Post.objects.get(pk=pk, is_active=True)
             if self.request.user.id == post.author_id:
-                request_data = dict(request.data)
-                request_data["author"] = request.user.id
+
+                request.data["author"] = request.user.id
                 post_serializer = PostSerializer(post, data=request.data, partial=True)
                 if post_serializer.is_valid():
                     post_serializer.save()

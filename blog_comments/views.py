@@ -11,13 +11,12 @@ class CreateCommentAPIVIEW(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        request_data = dict(request.data)
-        request_data["comment_author"] = request.user.id
+        request.data["comment_author"] = request.user.id
         post_id = pk
-        request_data["post"] = post_id
+        request.data["post"] = post_id
         post = Post.objects.filter(pk=post_id, is_active=True)
         if post:
-            serializer = CommentSerializer(data=request_data, partial=True)
+            serializer = CommentSerializer(data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 comment_data = redis_comment.get(pk)
